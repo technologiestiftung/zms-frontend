@@ -1,0 +1,21 @@
+{
+	"name": "@technologiestiftung/zms-supabase",
+	"version": "0.1.0",
+	"private": true,
+	"description": "![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)",
+	"scripts": {},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/technologiestiftung/zms-supabase.git"
+	},
+	"keywords": [],
+	"author": "ff6347 <hash@ff6347.email>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/technologiestiftung/zms-supabase/issues"
+	},
+	"homepage": "https://github.com/technologiestiftung/zms-supabase#readme",
+	"dependencies": {
+		"@technologiestiftung/semantic-release-config": "1.1.0"
+	}
+}
