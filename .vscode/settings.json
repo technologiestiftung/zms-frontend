@@ -1,0 +1,35 @@
+{
+	"workbench.colorCustomizations": {
+		"activityBar.activeBackground": "#e6e0fe",
+		"activityBar.background": "#e6e0fe",
+		"activityBar.foreground": "#15202b",
+		"activityBar.inactiveForeground": "#15202b99",
+		"activityBarBadge.background": "#f96a46",
+		"activityBarBadge.foreground": "#15202b",
+		"commandCenter.border": "#15202b99",
+		"sash.hoverBorder": "#e6e0fe",
+		"statusBar.background": "#bfaffc",
+		"statusBar.foreground": "#15202b",
+		"statusBarItem.hoverBackground": "#987efa",
+		"statusBarItem.remoteBackground": "#bfaffc",
+		"statusBarItem.remoteForeground": "#15202b",
+		"titleBar.activeBackground": "#bfaffc",
+		"titleBar.activeForeground": "#15202b",
+		"titleBar.inactiveBackground": "#bfaffc99",
+		"titleBar.inactiveForeground": "#15202b99"
+	},
+	"peacock.color": "#bfaffc",
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"server": "localhost",
+			"port": 54322,
+			"driver": "PostgreSQL",
+			"name": "zms-local-supabase",
+			"group": "zms",
+			"database": "postgres",
+			"username": "postgres",
+			"password": "postgres"
+		}
+	]
+}
