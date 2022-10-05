@@ -1,0 +1,8 @@
+-- TODO: Find our why this breaks my local development
+-- CREATE EXTENSION IF NOT EXISTS "pg_cron" WITH SCHEMA "public" version '1.4';
+-- GRANT usage ON SCHEMA cron TO postgres;
+-- GRANT ALL privileges ON ALL tables IN SCHEMA cron TO postgres;
+-- SELECT
+-- 	cron.schedule ('update processes scores every minute', '* * * * *', $$
+-- 		SELECT
+-- 			public.compute_scores () $$);
