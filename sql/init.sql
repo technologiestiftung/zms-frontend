@@ -68,6 +68,9 @@ CREATE TABLE public.processes (
 	service_type_id int REFERENCES service_types (id) ON DELETE SET NULL
 );
 
+ALTER TABLE processes
+	ADD PRIMARY KEY (id);
+
 -- ---------
 ALTER TABLE public.processes ENABLE ROW LEVEL SECURITY;
 
