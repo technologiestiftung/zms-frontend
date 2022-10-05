@@ -16,7 +16,10 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/315106?v=4",
       "profile": "https://fabianmoronzirfas.me/",
       "contributions": [
-        "doc"
+        "doc",
+        "code",
+        "design",
+        "infra"
       ]
     },
     {
