@@ -17,8 +17,3 @@ BEGIN
 END;
 $function$;
 
-SELECT
-	cron.schedule ('update processes scores every minute', '* * * * *', $$
-		SELECT
-			public.compute_scores () $$);
-
