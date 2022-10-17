@@ -1,23 +1,39 @@
+import { FC } from "react";
+import { Database } from "../db-types";
 import { ListItem } from "./ListItem";
-import { Process } from "../App";
+import { useServiceTypes } from "../utils/useServiceTypes";
 
-export const List: React.FC<{ data: Process[]; loading: boolean }> = ({
-	data,
-	loading,
-}) => {
+type Process = Database["public"]["Tables"]["processes"]["Row"];
+type ServiceType = Database["public"]["Tables"]["service_types"]["Row"];
+
+interface ListPropsType {
+	data: Process[];
+	loading: boolean;
+	serviceTypes: ServiceType[];
+}
+
+export const List: FC<ListPropsType> = ({ data, loading, serviceTypes }) => {
 	return (
-		<ul>
+		<table className="w-full text-sm">
+			<thead className="font-bold border-b">
+				<tr>
+					<td className="pb-3">ZMS ID</td>
+					<td className="pb-3">Checkin</td>
+					<td className="pb-3">Termin</td>
+					<td className="pb-3">Dienstleistung</td>
+					<td className="pb-3">Score</td>
+					<td className="pb-3"></td>
+				</tr>
+			</thead>
 			{!loading ? (
-				data.map((item) => (
-					<ListItem
-						key={item.id}
-						service_id={item.service_id}
-						score={item.score}
-					/>
-				))
+				<tbody>
+					{data.map((item) => (
+						<ListItem key={item.id} {...item} serviceTypes={serviceTypes} />
+					))}
+				</tbody>
 			) : (
-				<ListItem service_id={"Loading"} score={null} />
+				<span>Lädt...</span>
 			)}
-		</ul>
+		</table>
 	);
 };

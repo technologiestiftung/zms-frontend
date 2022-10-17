@@ -2,8 +2,10 @@ import { RealtimeSubscription } from "@supabase/supabase-js";
 import { Alert, Auth, Typography } from "@supabase/ui";
 import { FC, useCallback, useEffect, useState } from "react";
 import { List } from "../components/List";
+import { NextCall } from "../components/NextCall";
 import { Database } from "../db-types";
 import { supabase } from "../utils/supabase";
+import { useServiceTypes } from "../utils/useServiceTypes";
 
 type Process = Database["public"]["Tables"]["processes"]["Row"];
 
@@ -13,6 +15,7 @@ export const DeskService: FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { user } = Auth.useUser();
+	const { serviceTypes } = useServiceTypes();
 
 	const updateList = useCallback(async () => {
 		setLoading(true);
@@ -27,7 +30,7 @@ export const DeskService: FC = () => {
 			return;
 		}
 
-		setData(processes);
+		setData(processes.sort((a, b) => (b.score || -999) - (a.score || -999)));
 		setLoading(false);
 	}, []);
 
@@ -44,7 +47,9 @@ export const DeskService: FC = () => {
 			void updateList();
 		};
 		sub();
-		return () => subscription?.unsubscribe();
+		return () => {
+			subscription?.unsubscribe();
+		};
 	}, [updateList]);
 
 	useEffect(() => {
@@ -54,6 +59,11 @@ export const DeskService: FC = () => {
 	}, [user, change, updateList]);
 
 	if (!user) return null;
+
+	const [firstItem, ...listData] = data;
+	const firstItemServiceType = serviceTypes.find(
+		({ id }) => id === firstItem.service_type_id
+	);
 	return (
 		<>
 			{error && (
@@ -63,7 +73,10 @@ export const DeskService: FC = () => {
 					</Alert>
 				</div>
 			)}
-			<List data={data} loading={loading} />
+			{firstItem && (
+				<NextCall {...firstItem} serviceType={firstItemServiceType} />
+			)}
+			<List data={listData} loading={loading} serviceTypes={serviceTypes} />
 		</>
 	);
 };
