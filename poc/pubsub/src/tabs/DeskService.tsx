@@ -1,5 +1,6 @@
+import { RealtimeSubscription } from "@supabase/supabase-js";
 import { Alert, Auth, Typography } from "@supabase/ui";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { List } from "../components/List";
 import { Database } from "../db-types";
 import { supabase } from "../utils/supabase";
@@ -13,36 +14,44 @@ export const DeskService: FC = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { user } = Auth.useUser();
 
-	useEffect(() => {
-		supabase
-			.from("processes")
-			.on("*", (payload) => {
-				console.info("change detected!", payload);
-				setChange((prev) => prev + 1);
-			})
-			.subscribe();
+	const updateList = useCallback(async () => {
+		setLoading(true);
+		const { data: processes, error } = await supabase
+			.from<Process>("processes")
+			.select("*")
+			.filter("active", "eq", true);
+
+		if (error) {
+			console.error(error);
+			setError(error.message);
+			return;
+		}
+
+		setData(processes);
+		setLoading(false);
 	}, []);
 
 	useEffect(() => {
-		if (!user) return;
-		const fetch = async () => {
-			setLoading(true);
-			const { data: processes, error } = await supabase
-				.from<Process>("processes")
-				.select("*")
-				.filter("active", "eq", true);
-
-			if (error) {
-				console.error(error);
-				setError(error.message);
-				return;
-			}
-
-			setData(processes);
-			setLoading(false);
+		let subscription: RealtimeSubscription | null = null;
+		const sub = async () => {
+			subscription = supabase
+				.from("processes")
+				.on("*", (payload) => {
+					console.info("change detected!", payload);
+					setChange((prev) => prev + 1);
+				})
+				.subscribe();
+			void updateList();
 		};
-		fetch().catch(console.error);
-	}, [user, change]);
+		sub();
+		return () => subscription?.unsubscribe();
+	}, [updateList]);
+
+	useEffect(() => {
+		if (!user) return;
+		updateList();
+		setLoading(false);
+	}, [user, change, updateList]);
 
 	if (!user) return null;
 	return (

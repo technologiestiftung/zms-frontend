@@ -39,7 +39,7 @@
 	[type="button"],
 	[type="reset"],
 	[type="submit"] {
-		background: rgba(62, 207, 142, var(--tw-text-opacity));
+		background: rgba(36, 180, 126, var(--tw-bg-opacity));
 	}
 
 	[href="#auth-sign-up"] {
