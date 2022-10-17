@@ -1,4 +1,4 @@
-import { Alert, Auth, Button, Typography } from "@supabase/ui";
+import { Alert, Auth, Typography } from "@supabase/ui";
 import { FC, useEffect, useState } from "react";
 import { List } from "../components/List";
 import { Database } from "../db-types";
@@ -9,6 +9,7 @@ type Process = Database["public"]["Tables"]["processes"]["Row"];
 export const DeskService: FC = () => {
 	const [change, setChange] = useState<number>(0);
 	const [data, setData] = useState<Process[]>([]);
+	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { user } = Auth.useUser();
 
@@ -30,11 +31,13 @@ export const DeskService: FC = () => {
 				.from<Process>("processes")
 				.select("*")
 				.filter("active", "eq", true);
+
 			if (error) {
 				console.error(error);
-				throw error;
+				setError(error.message);
+				return;
 			}
-			// console.info(processes);
+
 			setData(processes);
 			setLoading(false);
 		};
@@ -44,16 +47,14 @@ export const DeskService: FC = () => {
 	if (!user) return null;
 	return (
 		<>
-			<div>
-				<Alert title="Change Detected">
-					<Typography.Text> Number of changes: {change}</Typography.Text>
-				</Alert>
-			</div>
+			{error && (
+				<div className="mb-4">
+					<Alert variant="danger" title="Es ist ein Fehler aufgetreten">
+						<Typography.Text>{error}</Typography.Text>
+					</Alert>
+				</div>
+			)}
 			<List data={data} loading={loading} />
-			<Typography.Text>Signed in: {user.email}</Typography.Text>
-			<Button block onClick={() => supabase.auth.signOut()}>
-				Sign out
-			</Button>
 		</>
 	);
 };

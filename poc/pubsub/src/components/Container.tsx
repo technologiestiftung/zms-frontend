@@ -11,7 +11,7 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 
 	return (
 		<>
-			<div className="p-4 text-lg">
+			<div className="p-4 text-lg container mx-auto">
 				{!user || Array.isArray(children) ? (
 					<div className="flex flex-col items-center justify-center h-screen">
 						<h1 className="text-2xl font-bold">Login / Signup</h1>
