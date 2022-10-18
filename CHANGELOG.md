@@ -1,3 +1,10 @@
+# [1.1.0-rc.2](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.1...v1.1.0-rc.2) (2022-10-18)
+
+
+### Bug Fixes
+
+* User deletion from auth schema ([8834e5c](https://github.com/technologiestiftung/zms-supabase/commit/8834e5c5241f653c557a513584ac7985f1333688))
+
 # [1.1.0-rc.1](https://github.com/technologiestiftung/zms-supabase/compare/v1.0.1...v1.1.0-rc.1) (2022-10-17)
 
 
