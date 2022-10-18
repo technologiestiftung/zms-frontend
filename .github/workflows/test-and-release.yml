@@ -9,6 +9,11 @@ on:
 
 jobs:
   test:
+    env:
+      SUPABASE_URL: http://localhost:54321
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24ifQ.625_WdcF3KHqz5amU0x2X5WWHP-OEs_4qj0ssLNHzTs
+      SUPABASE_DATABASE_URL: postgresql://postgres:postgres@localhost:54322/postgres
+
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     strategy:
@@ -21,9 +26,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.8.7
+      - run: supabase start
       - run: npm ci
       - run: npm t --if-present
       - run: npm run build --if-present
+      - run: supabase stop
 
   release:
     name: semantic-release

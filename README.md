@@ -1,7 +1,9 @@
 ![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # ZMS Bürgeramt Prototyp Supabase Backend
@@ -24,6 +26,23 @@ This is the backend for the ZMS Prototyp Bürgeramt project.
 1. Link to existing supabase project or create a new one `supabase link --project-ref 123qwertz`
 2. Start the local database `supabase start`
 3. Push the local state to the remote
+
+## Cron Jobs for score Computation
+
+Adding the cron extension [to the migrations](supabase/migrations/20221005135333_cron.sql) did create some errors in local development. To fix this, the following steps are necessary:
+
+When you have a remote database running got to the database settings under `https://app.supabase.com/project/<YOUR PROJECT ID>/database/extensions` and enable the cron extension.
+
+Then run the following SQL query in the database:
+
+```sql
+SELECT
+	cron.schedule ('update processes scores every minute', '* * * * *', $$
+		SELECT
+			public.compute_scores () $$);
+```
+
+This creates a new cronjob that runs the function `public.compute_scores` every minute.
 
 ## Development
 

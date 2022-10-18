@@ -2,8 +2,11 @@
 	"name": "@technologiestiftung/zms-supabase",
 	"version": "1.1.0-rc.1",
 	"private": true,
+	"type": "module",
 	"description": "![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)",
-	"scripts": {},
+	"scripts": {
+		"test": "jest"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/technologiestiftung/zms-supabase.git"
@@ -15,7 +18,22 @@
 		"url": "https://github.com/technologiestiftung/zms-supabase/issues"
 	},
 	"homepage": "https://github.com/technologiestiftung/zms-supabase#readme",
-	"dependencies": {
-		"@technologiestiftung/semantic-release-config": "1.1.0"
+	"dependencies": {},
+	"devDependencies": {
+		"@technologiestiftung/semantic-release-config": "1.1.0",
+		"@faker-js/faker": "7.6.0",
+		"@supabase/supabase-js": "2.0.0",
+		"@types/jest": "29.1.2",
+		"@typescript-eslint/eslint-plugin": "5.40.0",
+		"@typescript-eslint/parser": "5.40.0",
+		"dotenv": "16.0.3",
+		"eslint": "8.25.0",
+		"eslint-config-prettier": "8.5.0",
+		"eslint-plugin-prettier": "4.2.1",
+		"jest": "29.2.0",
+		"postgres": "3.3.1",
+		"ts-jest": "29.0.3",
+		"ts-node": "10.9.1",
+		"typescript": "4.8.4"
 	}
 }
