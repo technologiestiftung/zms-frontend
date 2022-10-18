@@ -45,4 +45,21 @@
 	[href="#auth-sign-up"] {
 		display: none;
 	}
+
+	[class~="bg-brand"] button[class~="sbui-btn-text"],
+	[class~="bg-brand"] button[class~="sbui-btn-outline"]:not(:hover) {
+		@apply text-white shadow-none;
+	}
+
+	[class~="bg-brand"] button[class~="sbui-btn-outline"]:not(:hover) {
+		@apply border-white bg-brandLight border-transparent;
+	}
+
+	[class~="bg-brand"] button[class~="sbui-btn-outline"]:hover {
+		@apply border-white;
+	}
+
+	[class~="bg-brand"] button[class~="sbui-btn-secondary"]:hover {
+		@apply bg-white;
+	}
 }

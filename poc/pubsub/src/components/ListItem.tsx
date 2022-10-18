@@ -1,6 +1,6 @@
 import { FC, HTMLProps } from "react";
 import { format } from "date-fns";
-import { InactiveProcessActions } from "./InactiveProcessActions";
+import { ProcessActions } from "./ProcessActions";
 import { ProcessType } from "../clean-types";
 import { useStore } from "../utils/Store";
 
@@ -39,8 +39,8 @@ export const ListItem: FC<ProcessType> = ({ ...process }) => {
 				</span>
 			</Td>
 			<Td className="w-96">
-				<div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-					<InactiveProcessActions process={process} />
+				<div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 justify-end">
+					<ProcessActions process={process} />
 				</div>
 			</Td>
 		</tr>

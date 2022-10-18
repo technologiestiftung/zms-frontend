@@ -11,7 +11,7 @@ export const Header: FC = () => {
 				<div className="flex gap-4 items-center">
 					<Typography.Text>{user.email}</Typography.Text>
 					<Button size="medium" onClick={() => supabase.auth.signOut()}>
-						Sign out
+						Ausloggen
 					</Button>
 				</div>
 			)}

@@ -4,8 +4,7 @@ import { FC } from "react";
 import { ProcessType, ServiceType } from "../clean-types";
 import classNames from "../utils/classNames";
 import { useStore } from "../utils/Store";
-import { ActiveProcessActions } from "./ActiveProcessActions";
-import { InactiveProcessActions } from "./InactiveProcessActions";
+import { ProcessActions } from "./ProcessActions";
 
 interface NextCallPropsType extends ProcessType {
 	serviceType?: ServiceType | null;
@@ -17,7 +16,7 @@ export const NextCall: FC<NextCallPropsType> = ({
 }) => {
 	const [processInProgress] = useStore((s) => s.processInProgress);
 	const process = processInProgress || nextProcess;
-	const { service_id, check_in_time, scheduled_time, score } = process;
+	const { service_id, check_in_time, scheduled_time } = process;
 	const inProgress = !!processInProgress;
 
 	const progressTitleText = classNames(
@@ -25,10 +24,10 @@ export const NextCall: FC<NextCallPropsType> = ({
 	);
 	const progressTitle = (
 		<div className="flex gap-4 items-center">
+			<span>{progressTitleText}</span>
 			<span className="animate-pulse block w-[24px] h-[24px]">
 				<IconRefreshCw size={24} strokeWidth={2} className="animate-spin" />
 			</span>
-			<span>{progressTitleText}</span>
 		</div>
 	);
 	const title = inProgress ? progressTitle : "Nächster Aufruf";
@@ -40,8 +39,8 @@ export const NextCall: FC<NextCallPropsType> = ({
 			)}
 		>
 			<h1 className="text-2xl font-bold mb-2">{title}</h1>
-			<div className="flex gap-6 justify-between">
-				<div className="flex gap-8 text-sm items-center">
+			<div className="flex gap-6 justify-between flex-wrap">
+				<div className="flex gap-8 text-sm">
 					<span>
 						<strong className="block">ZMS ID: </strong>
 						{service_id}
@@ -61,16 +60,14 @@ export const NextCall: FC<NextCallPropsType> = ({
 					{serviceType?.name && (
 						<span>
 							<strong className="block">Dienstleistung: </strong>
-							{serviceType?.name}
+							<div className="truncate max-w-xs" title={serviceType?.name}>
+								{serviceType?.name}
+							</div>
 						</span>
 					)}
 				</div>
-				<div className="flex gap-4 float-right">
-					{inProgress ? (
-						<ActiveProcessActions process={process} />
-					) : (
-						<InactiveProcessActions process={process} />
-					)}
+				<div className="flex gap-4 items-end">
+					<ProcessActions process={process} />
 				</div>
 			</div>
 		</div>
