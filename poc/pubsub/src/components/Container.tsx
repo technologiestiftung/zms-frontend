@@ -7,6 +7,7 @@ import { ReceptionService } from "../tabs/ReceptionService";
 import { useStore } from "../utils/Store";
 import { supabase } from "../utils/supabase";
 import { Header } from "./Header";
+import { Progress } from "../components/Progress";
 
 interface ContainerProps {
 	children: JSX.Element | JSX.Element[];
@@ -121,6 +122,7 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 			>
 				<h1>EDIT ME</h1>
 			</Modal>
+			<Progress />
 		</>
 	);
 };

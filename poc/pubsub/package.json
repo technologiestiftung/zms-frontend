@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ramonak/react-progress-bar": "5.0.3",
     "@supabase/supabase-js": "1.35.7",
     "@supabase/ui": "0.36.5",
     "date-fns": "2.29.3",
+    "mock-progress-react": "1.0.8",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
