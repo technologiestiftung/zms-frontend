@@ -1,15 +1,10 @@
 import { FC, HTMLProps } from "react";
-import { Database } from "../db-types";
 import { format } from "date-fns";
-import { ProcessActions } from "./ProcessActions";
+import { InactiveProcessActions } from "./InactiveProcessActions";
+import { ProcessType } from "../clean-types";
+import { useStore } from "../utils/Store";
 
-type Process = Database["public"]["Tables"]["processes"]["Row"];
-type ServiceType = Database["public"]["Tables"]["service_types"]["Row"];
-
-export const Td: FC<HTMLProps<HTMLTableCellElement>> = ({
-	children,
-	className,
-}) => (
+const Td: FC<HTMLProps<HTMLTableCellElement>> = ({ children, className }) => (
 	<td
 		className={[
 			className,
@@ -23,19 +18,10 @@ export const Td: FC<HTMLProps<HTMLTableCellElement>> = ({
 	</td>
 );
 
-interface ListItemPropsType extends Process {
-	serviceTypes: ServiceType[];
-}
-
-export const ListItem: FC<ListItemPropsType> = ({
-	id,
-	serviceTypes,
-	service_id,
-	scheduled_time,
-	check_in_time,
-	service_type_id,
-	score,
-}) => {
+export const ListItem: FC<ProcessType> = ({ ...process }) => {
+	const [serviceTypes] = useStore((s) => s.serviceTypes);
+	const { service_id, scheduled_time, check_in_time, service_type_id, score } =
+		process;
 	const serviceType = serviceTypes.find(
 		(serviceType) => serviceType.id === service_type_id
 	);
@@ -55,7 +41,7 @@ export const ListItem: FC<ListItemPropsType> = ({
 			<Td>{score}</Td>
 			<Td className="w-96">
 				<div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-					<ProcessActions rowId={id} />
+					<InactiveProcessActions process={process} />
 				</div>
 			</Td>
 		</tr>
