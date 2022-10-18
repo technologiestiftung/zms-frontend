@@ -9,6 +9,8 @@ interface StoreType {
 	serviceTypesLoading: boolean;
 	serviceTypesError: string | null;
 	serviceTypes: ServiceType[];
+	actionLoading: boolean;
+	actionError: string | null;
 }
 
 const { Provider, useStore: originalUseStore } = createFastContext<StoreType>({
@@ -19,6 +21,8 @@ const { Provider, useStore: originalUseStore } = createFastContext<StoreType>({
 	serviceTypes: [],
 	serviceTypesLoading: true,
 	serviceTypesError: null,
+	actionLoading: false,
+	actionError: null,
 });
 
 export const useStore = originalUseStore;

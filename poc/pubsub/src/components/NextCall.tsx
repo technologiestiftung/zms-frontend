@@ -43,31 +43,25 @@ export const NextCall: FC<NextCallPropsType> = ({
 			<div className="flex gap-6 justify-between">
 				<div className="flex gap-8 text-sm items-center">
 					<span>
-						<strong>ZMS ID: </strong>
+						<strong className="block">ZMS ID: </strong>
 						{service_id}
 					</span>
-					{serviceType?.name && (
-						<span>
-							<strong>Dienstleistung: </strong>
-							{serviceType?.name}
-						</span>
-					)}
 					{
 						<span>
-							<strong>Checkin: </strong>
+							<strong className="block">Checkin: </strong>
 							{format(new Date(check_in_time), "HH:mm")}
 						</span>
 					}
 					{scheduled_time && (
 						<span>
-							<strong>Termin: </strong>
+							<strong className="block">Termin: </strong>
 							{format(new Date(scheduled_time), "HH:mm")}
 						</span>
 					)}
-					{score && (
+					{serviceType?.name && (
 						<span>
-							<strong>Score: </strong>
-							{score}
+							<strong className="block">Dienstleistung: </strong>
+							{serviceType?.name}
 						</span>
 					)}
 				</div>

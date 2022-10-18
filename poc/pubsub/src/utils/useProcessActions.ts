@@ -1,3 +1,4 @@
+// import { Auth } from "@supabase/ui"; // TODO: Add userId to process when implemented in DB
 import { useCallback } from "react";
 import { ProcessType } from "../clean-types";
 import { useStore } from "./Store";
@@ -18,19 +19,73 @@ export const useProcessActions = (
 	completeProcess: () => Promise<void>;
 	editProcess: (newProcess: Partial<ProcessType>) => Promise<void>;
 } => {
-	const [, setStore] = useStore((s) => s.processInProgress);
+	const [processInProgress, setStore] = useStore((s) => s.processInProgress);
+	// const { user } = Auth.useUser(); // TODO: Add userId to process when implemented in DB
 
-	const callProcess = useCallback(() => {
-		setStore({ processInProgress: process });
+	const callProcess = useCallback(async () => {
+		setStore({
+			processInProgress: process,
+			actionLoading: true,
+			actionError: null,
+		});
+		const { error } = await supabase
+			.from<ProcessType>("processes")
+			.update({ start_time: new Date().toISOString(), end_time: null })
+			.match({ id: process.id });
+		if (error) {
+			console.log(error);
+			config?.onError && config.onError(error.message, process);
+			setStore({
+				processInProgress: null,
+				actionLoading: false,
+				actionError: error.message,
+			});
+			return;
+		}
 		config?.onCalled && config.onCalled(process);
-	}, [setStore, process, config]);
-
-	const cancelProcessCall = useCallback(() => {
-		setStore({ processInProgress: null });
-		config?.onCancelled && config.onCancelled(process);
+		setStore({
+			processInProgress: process,
+			actionLoading: false,
+			actionError: null,
+		});
 	}, [config, process, setStore]);
 
+	const cancelProcessCall = useCallback(async () => {
+		if (processInProgress) {
+			setStore({
+				processInProgress: null,
+				actionLoading: true,
+				actionError: null,
+			});
+			const { error } = await supabase
+				.from<ProcessType>("processes")
+				.update({ start_time: null, end_time: null })
+				.match({ id: processInProgress.id });
+			if (error) {
+				console.log(error);
+				config?.onError && config.onError(error.message, process);
+				setStore({
+					processInProgress,
+					actionLoading: false,
+					actionError: error.message,
+				});
+				return;
+			}
+			config?.onCancelled && config.onCancelled(process);
+			setStore({
+				processInProgress: null,
+				actionLoading: false,
+				actionError: null,
+			});
+		}
+	}, [config, process, processInProgress, setStore]);
+
 	const completeProcess = useCallback(async () => {
+		setStore({
+			processInProgress: null,
+			actionLoading: true,
+			actionError: null,
+		});
 		const { error } = await supabase
 			.from<ProcessType>("processes")
 			.update({ end_time: new Date().toISOString() })
@@ -38,14 +93,27 @@ export const useProcessActions = (
 		if (error) {
 			console.log(error);
 			config?.onError && config.onError(error.message, process);
+			setStore({
+				processInProgress: process,
+				actionLoading: false,
+				actionError: error.message,
+			});
 			return;
 		}
 		config?.onCompleted && config.onCompleted(process);
-		setStore({ processInProgress: null });
+		setStore({
+			processInProgress: null,
+			actionLoading: false,
+			actionError: null,
+		});
 	}, [process, config, setStore]);
 
 	const editProcess = useCallback(
 		async (newProcess: Partial<ProcessType>) => {
+			setStore({
+				actionLoading: true,
+				actionError: null,
+			});
 			const { error } = await supabase
 				.from<ProcessType>("processes")
 				.update(newProcess)
@@ -53,12 +121,19 @@ export const useProcessActions = (
 			if (error) {
 				console.log(error);
 				config?.onError && config.onError(error.message, process);
+				setStore({
+					actionLoading: true,
+					actionError: error.message,
+				});
 				return;
 			}
 			config?.onEdited && config.onEdited(process);
-			setStore({ processInProgress: null });
+			setStore({
+				actionLoading: false,
+				actionError: null,
+			});
 		},
-		[process, config, setStore]
+		[setStore, process, config]
 	);
 
 	return {

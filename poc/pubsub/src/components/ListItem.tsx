@@ -20,7 +20,7 @@ const Td: FC<HTMLProps<HTMLTableCellElement>> = ({ children, className }) => (
 
 export const ListItem: FC<ProcessType> = ({ ...process }) => {
 	const [serviceTypes] = useStore((s) => s.serviceTypes);
-	const { service_id, scheduled_time, check_in_time, service_type_id, score } =
+	const { service_id, scheduled_time, check_in_time, service_type_id } =
 		process;
 	const serviceType = serviceTypes.find(
 		(serviceType) => serviceType.id === service_type_id
@@ -38,7 +38,6 @@ export const ListItem: FC<ProcessType> = ({ ...process }) => {
 					{serviceType?.name}
 				</span>
 			</Td>
-			<Td>{score}</Td>
 			<Td className="w-96">
 				<div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
 					<InactiveProcessActions process={process} />
