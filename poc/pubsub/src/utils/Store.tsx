@@ -3,6 +3,7 @@ import createFastContext from "./createFastContext";
 
 interface StoreType {
 	processInProgress: null | ProcessType;
+	currentlyEditedProcess: null | ProcessType;
 	processes: ProcessType[];
 	processesLoading: boolean;
 	processesError: string | null;
@@ -15,6 +16,7 @@ interface StoreType {
 
 const { Provider, useStore: originalUseStore } = createFastContext<StoreType>({
 	processInProgress: null,
+	currentlyEditedProcess: null,
 	processes: [],
 	processesLoading: true,
 	processesError: null,

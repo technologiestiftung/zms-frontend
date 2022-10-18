@@ -24,7 +24,7 @@ export const ProcessActions: FC<ProcessActionsPropsType> = ({
 	onRestored = (...args) => console.log("onRestored", ...args),
 }) => {
 	// const { user } = Auth.useUser(); // TODO: Change for this when editorID exists in DB
-	const [processInProgress] = useStore((s) => s.processInProgress);
+	const [processInProgress, setStore] = useStore((s) => s.processInProgress);
 	const { callProcess, cancelProcessCall, completeProcess, restoreProcess } =
 		useProcessActions(process, {
 			onCompleted,
@@ -36,7 +36,7 @@ export const ProcessActions: FC<ProcessActionsPropsType> = ({
 
 	const isCalled = !!process.start_time && !process.end_time;
 	const isNext = !process.start_time && !process.end_time;
-	const isDone = !!process.start_time && !!process.end_time;
+	const isDone = !!process.end_time;
 	// const isOwned = process.editorId === user?.id; // TODO: Change for this when editorID exists in DB
 	const isOwned = process.id === processInProgress?.id;
 	const isOwnedAndCalled = isCalled && isOwned;
@@ -59,7 +59,10 @@ export const ProcessActions: FC<ProcessActionsPropsType> = ({
 				</Button>
 			)}
 			<Button
-				onClick={() => onEdit(process)}
+				onClick={() => {
+					onEdit(process);
+					setStore({ currentlyEditedProcess: process });
+				}}
 				type={isOwnedAndCalled ? "outline" : "secondary"}
 			>
 				Anpassen

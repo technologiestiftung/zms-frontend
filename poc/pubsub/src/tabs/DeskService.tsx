@@ -1,4 +1,5 @@
 import { Alert, Auth, Typography } from "@supabase/ui";
+import { isToday } from "date-fns";
 import { FC } from "react";
 import { List } from "../components/List";
 import { NextCall } from "../components/NextCall";
@@ -13,11 +14,19 @@ export const DeskService: FC = () => {
 
 	if (!user) return null;
 
-	const calledProcesses = processes.filter(
+	const processesOfToday = processes.filter(
+		({ check_in_time, scheduled_time }) =>
+			isToday(new Date(check_in_time)) &&
+			scheduled_time &&
+			isToday(new Date(scheduled_time))
+	);
+	const calledProcesses = processesOfToday.filter(
 		(p) => !!p.start_time && !p.end_time && p.id !== processInProgress?.id
 	);
-	const doneProcesses = processes.filter((p) => !!p.start_time && !!p.end_time);
-	const nextProcesses = processes.filter((p) => !p.start_time && !p.end_time);
+	const doneProcesses = processesOfToday.filter((p) => !!p.end_time);
+	const nextProcesses = processesOfToday.filter(
+		(p) => !p.start_time && !p.end_time
+	);
 	const firstItem = nextProcesses[0];
 	const firstItemServiceType = serviceTypes.find(
 		({ id }) => id === firstItem?.service_type_id
