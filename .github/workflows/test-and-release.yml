@@ -26,9 +26,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.8.7
+      - run: supabase start
       - run: npm ci
       - run: npm t --if-present
       - run: npm run build --if-present
+      - run: supabase stop
 
   release:
     name: semantic-release
