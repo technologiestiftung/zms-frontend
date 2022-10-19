@@ -1,3 +1,15 @@
+# [1.1.0-rc.6](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.5...v1.1.0-rc.6) (2022-10-19)
+
+
+### Bug Fixes
+
+* Function parameter naming error in migration ([e6754df](https://github.com/technologiestiftung/zms-supabase/commit/e6754df64a3b142651bd7eae0bdc197102a0a12e))
+
+
+### Features
+
+* **relation:** Add service type relation table ([00dfd21](https://github.com/technologiestiftung/zms-supabase/commit/00dfd21eb399c7eb8bd99d17a81154947b894b04))
+
 # [1.1.0-rc.5](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.4...v1.1.0-rc.5) (2022-10-19)
 
 
