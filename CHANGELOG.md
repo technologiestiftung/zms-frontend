@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/technologiestiftung/zms-supabase/compare/v1.3.0...v1.4.0) (2022-10-19)
+
+
+### Features
+
+* **processes:** Add profile id to process ([bbf8328](https://github.com/technologiestiftung/zms-supabase/commit/bbf8328a664116c065f25ed60aa80e651086c64d))
+
 # [1.4.0-rc.1](https://github.com/technologiestiftung/zms-supabase/compare/v1.3.0...v1.4.0-rc.1) (2022-10-19)
 
 
