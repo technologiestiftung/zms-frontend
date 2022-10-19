@@ -6,10 +6,16 @@ on:
   pull_request:
     branches: [main, staging]
   workflow_dispatch:
-
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
+        required: false
+        default: false
 jobs:
   test:
     env:
+      SUPABASE_INTERNAL_IMAGE_REGISTRY: docker.io
       SUPABASE_URL: http://localhost:54321
       SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24ifQ.625_WdcF3KHqz5amU0x2X5WWHP-OEs_4qj0ssLNHzTs
       SUPABASE_DATABASE_URL: postgresql://postgres:postgres@localhost:54322/postgres
@@ -26,12 +32,23 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME  }}
+          password: ${{ secrets.DOCKER_PASSWORD  }}
       - uses: supabase/setup-cli@v1
         with:
           version: 1.8.7
       - run: supabase start
       - run: npm ci
-      - run: npm t --if-present
+      - run: npm t
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
+        timeout-minutes: 15
+        with:
+          limit-access-to-actor: true
       - run: npm run build --if-present
       - run: supabase stop
 

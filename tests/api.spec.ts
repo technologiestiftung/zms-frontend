@@ -1,4 +1,4 @@
-import { tearDown } from "./utils/db";
+import { setupDB, tearDownDB } from "./utils/db";
 import {
 	createUsersSupabaseClient,
 	supabaseClient,
@@ -25,12 +25,13 @@ describe("Supabase API", () => {
 	});
 
 	test("should get response from supabase api using client SDK ", async () => {
+		await setupDB();
 		const { user, email, password } = await supabaseSDKSignUp();
 		await supabaseSDKSignIn(email, password);
 		const usersClient = createUsersSupabaseClient(user.data.session?.access_token);
 		const { data, error } = await usersClient.from("profiles").select("*");
 		expect(error).toBe(null);
 		expect(data).toHaveLength(1);
-		await tearDown();
+		await tearDownDB();
 	});
 });
