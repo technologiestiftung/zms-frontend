@@ -1,7 +1,6 @@
 import { Alert, Auth, Typography } from "@supabase/ui";
 import { isToday } from "date-fns";
 import { FC } from "react";
-import { ServiceType } from "../clean-types";
 import { List } from "../components/List";
 import { NextCall } from "../components/NextCall";
 import { useStore } from "../utils/Store";
@@ -29,9 +28,6 @@ export const DeskService: FC = () => {
 		(p) => !p.start_time && !p.end_time
 	);
 	const firstItem = nextProcesses[0];
-	const firstItemServiceTypes = firstItem?.service_types
-		.map((s) => serviceTypes.find((serviceType) => serviceType.id === s.id))
-		.filter(Boolean) as ServiceType[];
 	return (
 		<>
 			{nextProcesses.length === 0 && (
@@ -52,10 +48,7 @@ export const DeskService: FC = () => {
 			)}
 			{nextProcesses.length > 0 && (
 				<>
-					<NextCall
-						{...firstItem}
-						processServiceTypes={firstItemServiceTypes}
-					/>
+					<NextCall {...firstItem} />
 					<h2 className="mb-2 mt-8">Nächste Aufrufe</h2>
 					<hr className="mb-3" />
 					<List processes={nextProcesses} />
