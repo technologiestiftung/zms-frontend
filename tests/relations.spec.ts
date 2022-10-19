@@ -1,33 +1,12 @@
-import { setupDB, tearDownDB } from "./utils/db";
-import {
-	createUsersSupabaseClient,
-	supabaseClient,
-	supabaseSDKSignIn,
-	supabaseSDKSignUp,
-} from "./utils/supabase";
-
-import { Database } from "./utils/types";
-type Process = Database["public"]["Tables"]["processes"]["Row"];
+import { Process, processes } from "./fixtures/processes";
+import { tearDownDB } from "./utils/db";
+import { createUsersSupabaseClient, supabaseSDKSignIn, supabaseSDKSignUp } from "./utils/supabase";
 
 describe("relations table", () => {
 	test("should get relations with text", async () => {
 		await tearDownDB();
 		// await setupDB();
 
-		const processes: Partial<Process>[] = [
-			{
-				service_id: 1,
-				notes: "notes",
-				check_in_time: "2021-01-01 00:00:00",
-				scheduled_time: "2021-01-01 00:00:00",
-			},
-			{
-				service_id: 1,
-				score: 1,
-				check_in_time: "2021-01-01 00:00:00",
-				scheduled_time: "2021-01-01 00:00:00",
-			},
-		];
 		const { user, email, password } = await supabaseSDKSignUp();
 		await supabaseSDKSignIn(email, password);
 		const usersClient = createUsersSupabaseClient(user.data.session?.access_token);
