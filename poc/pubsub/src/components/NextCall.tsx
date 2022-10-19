@@ -62,10 +62,18 @@ export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 								:{" "}
 							</strong>
 							{processServiceTypes.map((s) => (
-								<div className="truncate max-w-md" key={s.id} title={s.name}>
+								<div className="max-w-sm" key={s.id} title={s.name}>
 									{s?.name}
 								</div>
 							))}
+						</span>
+					)}
+					{process.notes && (
+						<span>
+							<strong className="block">Notizen</strong>
+							<div className="max-w-sm" title={process.notes}>
+								{process.notes}
+							</div>
 						</span>
 					)}
 				</div>

@@ -1,4 +1,4 @@
-import { Alert, Auth, Input, Select, Typography } from "@supabase/ui";
+import { Alert, Auth, Input, Typography } from "@supabase/ui";
 import {
 	FC,
 	useRef,
@@ -23,6 +23,7 @@ const parseFormData = (
 	serviceId: number;
 	serviceTypeIds: number[];
 	scheduledDate: Date;
+	notes: string | null;
 } => {
 	const rawScheduledTime = data.get("scheduledTime") as string;
 	const [hours, minutes] = rawScheduledTime.split(":");
@@ -33,9 +34,11 @@ const parseFormData = (
 		typeof rawServiceId === "string" ? parseInt(rawServiceId, 10) : 1
 	) as number;
 
+	const notes = data.get("notes") as string | null;
+
 	const serviceTypeIds = serviceTypesValue.map((s) => s.value) as number[];
 
-	return { serviceId, serviceTypeIds, scheduledDate };
+	return { serviceId, serviceTypeIds, scheduledDate, notes: notes || null };
 };
 
 export const ReceptionService: FC = () => {
@@ -50,6 +53,7 @@ export const ReceptionService: FC = () => {
 		string | null
 	>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
+	const [textAreaValue, setTextAreaValue] = useState<string>("");
 
 	useEffect(() => {
 		if (!touched) return;
@@ -82,7 +86,7 @@ export const ReceptionService: FC = () => {
 			setServiceTypesSelectError(null);
 
 			const rawData = new FormData(formRef.current);
-			const { serviceId, serviceTypeIds, scheduledDate } = parseFormData(
+			const { serviceId, serviceTypeIds, scheduledDate, notes } = parseFormData(
 				rawData,
 				serviceTypesValue
 			);
@@ -93,6 +97,7 @@ export const ReceptionService: FC = () => {
 					{
 						service_id: serviceId,
 						scheduled_time: scheduledDate.toISOString(),
+						notes,
 					},
 				]);
 
@@ -128,6 +133,7 @@ export const ReceptionService: FC = () => {
 			formRef.current.reset();
 			formRef.current.focus();
 			setServiceTypesValue([]);
+			setTextAreaValue("");
 			setTouched(false);
 		},
 		[serviceTypes, serviceTypesValue]
@@ -177,6 +183,13 @@ export const ReceptionService: FC = () => {
 						label="Uhrzeit des ursprünglichen Termins (Nicht des Checkins)"
 						required
 						type="time"
+					/>
+					<Input.TextArea
+						name="notes"
+						placeholder="Fügen Sie hier eine Notiz hinzu"
+						label="Notizen (optional)"
+						value={textAreaValue}
+						onChange={(evt) => setTextAreaValue(evt.target.value)}
 					/>
 				</fieldset>
 				<div className="sbui-btn-container">

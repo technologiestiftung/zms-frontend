@@ -20,7 +20,8 @@ const Td: FC<HTMLProps<HTMLTableCellElement>> = ({ children, className }) => (
 
 export const ListItem: FC<ProcessType> = ({ ...process }) => {
 	const [serviceTypes] = useStore((s) => s.serviceTypes);
-	const { service_id, scheduled_time, check_in_time, service_types } = process;
+	const { service_id, scheduled_time, check_in_time, service_types, notes } =
+		process;
 	const processServiceTypes = service_types
 		.map(
 			(s) => serviceTypes.find((serviceType) => serviceType.id === s.id)?.name
@@ -38,10 +39,15 @@ export const ListItem: FC<ProcessType> = ({ ...process }) => {
 			</Td>
 			<Td>
 				<span
-					className="truncate max-w-md inline-block"
+					className="truncate max-w-sm inline-block"
 					title={processServiceTypes}
 				>
 					{processServiceTypes}
+				</span>
+			</Td>
+			<Td>
+				<span className="truncate max-w-sm inline-block" title={notes || ""}>
+					{notes}
 				</span>
 			</Td>
 			<Td className="w-96">
