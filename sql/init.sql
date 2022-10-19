@@ -107,3 +107,9 @@ ALTER TABLE public.service_types
 ALTER TABLE public.processes
 	DROP COLUMN IF EXISTS service_type_id;
 
+ALTER TABLE public.processes
+	ADD COLUMN profile_id uuid REFERENCES profiles (id) ON DELETE SET NULL;
+
+ALTER TABLE public.processes
+	DROP COLUMN profile_id;
+
