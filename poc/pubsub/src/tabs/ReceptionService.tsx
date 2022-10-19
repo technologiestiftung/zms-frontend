@@ -3,6 +3,7 @@ import { FC, useRef, FormEventHandler, useCallback, useState } from "react";
 import { supabase } from "../utils/supabase";
 import { useServiceTypes } from "../utils/useServiceTypes";
 import { setMinutes, setHours } from "date-fns";
+import { useStore } from "../utils/Store";
 
 const parseFormData = (
 	data: FormData
@@ -28,9 +29,10 @@ const parseFormData = (
 export const ReceptionService: FC = () => {
 	const formRef = useRef<HTMLFormElement | null>(null);
 	const { user } = Auth.useUser();
+	const [serviceTypes] = useStore((s) => s.serviceTypes);
+	const [serviceTypesError] = useStore((s) => s.serviceTypesError);
 	const [error, setError] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
-	const { error: serviceTypesError, serviceTypes } = useServiceTypes();
 
 	const submitHandler = useCallback<FormEventHandler<HTMLFormElement>>(
 		async (evt): Promise<void> => {

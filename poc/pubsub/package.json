@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "1.7.3",
     "@ramonak/react-progress-bar": "5.0.3",
     "@supabase/supabase-js": "1.35.7",
     "@supabase/ui": "0.36.5",

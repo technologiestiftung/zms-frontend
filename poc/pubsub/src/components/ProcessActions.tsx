@@ -48,7 +48,7 @@ export const ProcessActions: FC<ProcessActionsPropsType> = ({
 					Widerherstellen
 				</Button>
 			)}
-			{isOwnedAndCalled && (
+			{isCalled && (
 				<Button onClick={cancelProcessCall} type="text">
 					Abbrechen
 				</Button>

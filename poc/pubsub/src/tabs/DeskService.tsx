@@ -35,9 +35,9 @@ export const DeskService: FC = () => {
 		<>
 			{nextProcesses.length === 0 && (
 				<div className="mb-4">
-					<Alert variant="info" title="Niemand ist eingechecked">
+					<Alert variant="info" title="Heute hat noch niemand eingecheckt">
 						<Typography.Text>
-							Warten Sie auf die erste Besucher. Sie werden hier angezeigt
+							Warten Sie auf die ersten Besucher. Diese werden hier angezeigt.
 						</Typography.Text>
 					</Alert>
 				</div>

@@ -1,5 +1,5 @@
 import { RealtimeSubscription } from "@supabase/supabase-js";
-import { Auth, IconFlag, IconMonitor, Modal, Tabs } from "@supabase/ui";
+import { Auth, IconFlag, IconMonitor, Tabs } from "@supabase/ui";
 import { useCallback, useEffect, useState } from "react";
 import { ProcessType, ServiceType } from "../clean-types";
 import { DeskService } from "../tabs/DeskService";
@@ -8,6 +8,7 @@ import { useStore } from "../utils/Store";
 import { supabase } from "../utils/supabase";
 import { Header } from "./Header";
 import { Progress } from "../components/Progress";
+import { EditProcessModal } from "./EditProcessModal";
 
 interface ContainerProps {
 	children: JSX.Element | JSX.Element[];
@@ -15,10 +16,22 @@ interface ContainerProps {
 export const Container = ({ children }: ContainerProps): JSX.Element => {
 	const { user } = Auth.useUser();
 	const [activeTab, setActiveTab] = useState<string>("reception");
-	const [currentlyEditedProcess, setStore] = useStore(
-		(s) => s.currentlyEditedProcess
-	);
+	const [processInProgress, setStore] = useStore((s) => s.processInProgress);
+	const [processes] = useStore((s) => s.processes);
 	const [change, setChange] = useState<number>(0);
+
+	useEffect(() => {
+		if (!processInProgress) return;
+		const progressProcess = processes.find(
+			(p) => p.id === processInProgress.id
+		);
+		if (
+			!progressProcess?.start_time ||
+			(progressProcess?.start_time && progressProcess?.end_time)
+		) {
+			setStore({ processInProgress: null });
+		}
+	}, [processInProgress, processes, setStore]);
 
 	useEffect(() => {
 		const loadServiceTypes = async (): Promise<void> => {
@@ -115,13 +128,7 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 					</>
 				)}
 			</div>
-			<Modal
-				visible={!!currentlyEditedProcess}
-				title={`Eintrag mit ZMS ID ${currentlyEditedProcess?.service_id}`}
-				onCancel={() => setStore({ currentlyEditedProcess: null })}
-			>
-				<h1>EDIT ME</h1>
-			</Modal>
+			{user && <EditProcessModal />}
 			<Progress />
 		</>
 	);

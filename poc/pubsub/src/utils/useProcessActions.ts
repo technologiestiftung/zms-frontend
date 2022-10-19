@@ -57,41 +57,38 @@ export const useProcessActions = (
 	}, [config, process, setStore, processes]);
 
 	const cancelProcessCall = useCallback(async () => {
-		if (processInProgress) {
+		setStore({
+			processInProgress: null,
+			actionLoading: true,
+			actionError: null,
+			processes: processes.map((p) => {
+				if (p.id === process.id) {
+					return { ...p, start_time: null, end_time: null };
+				}
+				return p;
+			}),
+		});
+		const { error } = await supabase
+			.from<ProcessType>("processes")
+			.update({ start_time: null, end_time: null })
+			.match({ id: process.id });
+		if (error) {
+			console.log(error);
+			config?.onError && config.onError(error.message, process);
 			setStore({
-				processInProgress: null,
-				actionLoading: true,
-				actionError: null,
-				processes: processes.map((p) => {
-					if (p.id === process.id) {
-						return { ...p, start_time: null, end_time: null };
-					}
-					return p;
-				}),
-			});
-			const { error } = await supabase
-				.from<ProcessType>("processes")
-				.update({ start_time: null, end_time: null })
-				.match({ id: processInProgress.id });
-			if (error) {
-				console.log(error);
-				config?.onError && config.onError(error.message, process);
-				setStore({
-					processInProgress,
-					actionLoading: false,
-					actionError: error.message,
-					processes,
-				});
-				return;
-			}
-			config?.onCancelled && config.onCancelled(process);
-			setStore({
-				processInProgress: null,
 				actionLoading: false,
-				actionError: null,
+				actionError: error.message,
+				processes,
 			});
+			return;
 		}
-	}, [config, process, processInProgress, processes, setStore]);
+		config?.onCancelled && config.onCancelled(process);
+		setStore({
+			processInProgress: null,
+			actionLoading: false,
+			actionError: null,
+		});
+	}, [config, process, processes, setStore]);
 
 	const callProcess = useCallback(async () => {
 		if (processInProgress) {
