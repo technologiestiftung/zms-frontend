@@ -1,69 +1,76 @@
-import { RealtimeSubscription } from "@supabase/supabase-js";
 import { Alert, Auth, Typography } from "@supabase/ui";
-import { FC, useCallback, useEffect, useState } from "react";
+import { isToday } from "date-fns";
+import { FC } from "react";
 import { List } from "../components/List";
-import { Database } from "../db-types";
-import { supabase } from "../utils/supabase";
-
-type Process = Database["public"]["Tables"]["processes"]["Row"];
+import { NextCall } from "../components/NextCall";
+import { useStore } from "../utils/Store";
 
 export const DeskService: FC = () => {
-	const [change, setChange] = useState<number>(0);
-	const [data, setData] = useState<Process[]>([]);
-	const [error, setError] = useState<string | null>(null);
-	const [loading, setLoading] = useState<boolean>(false);
+	const [serviceTypes] = useStore((s) => s.serviceTypes);
+	const [processes] = useStore((s) => s.processes);
+	const [processesError] = useStore((s) => s.processesError);
+	const [processInProgress] = useStore((s) => s.processInProgress);
 	const { user } = Auth.useUser();
 
-	const updateList = useCallback(async () => {
-		setLoading(true);
-		const { data: processes, error } = await supabase
-			.from<Process>("processes")
-			.select("*")
-			.filter("active", "eq", true);
-
-		if (error) {
-			console.error(error);
-			setError(error.message);
-			return;
-		}
-
-		setData(processes);
-		setLoading(false);
-	}, []);
-
-	useEffect(() => {
-		let subscription: RealtimeSubscription | null = null;
-		const sub = async () => {
-			subscription = supabase
-				.from("processes")
-				.on("*", (payload) => {
-					console.info("change detected!", payload);
-					setChange((prev) => prev + 1);
-				})
-				.subscribe();
-			void updateList();
-		};
-		sub();
-		return () => subscription?.unsubscribe();
-	}, [updateList]);
-
-	useEffect(() => {
-		if (!user) return;
-		updateList();
-		setLoading(false);
-	}, [user, change, updateList]);
-
 	if (!user) return null;
+
+	const processesOfToday = processes.filter(
+		({ check_in_time, scheduled_time }) =>
+			isToday(new Date(check_in_time)) &&
+			scheduled_time &&
+			isToday(new Date(scheduled_time))
+	);
+	const calledProcesses = processesOfToday.filter(
+		(p) => !!p.start_time && !p.end_time && p.id !== processInProgress?.id
+	);
+	const doneProcesses = processesOfToday.filter((p) => !!p.end_time);
+	const nextProcesses = processesOfToday.filter(
+		(p) => !p.start_time && !p.end_time
+	);
+	const firstItem = nextProcesses[0];
+	const firstItemServiceType = serviceTypes.find(
+		({ id }) => id === firstItem?.service_type_id
+	);
 	return (
 		<>
-			{error && (
+			{nextProcesses.length === 0 && (
 				<div className="mb-4">
-					<Alert variant="danger" title="Es ist ein Fehler aufgetreten">
-						<Typography.Text>{error}</Typography.Text>
+					<Alert variant="info" title="Heute hat noch niemand eingecheckt">
+						<Typography.Text>
+							Warten Sie auf die ersten Besucher. Diese werden hier angezeigt.
+						</Typography.Text>
 					</Alert>
 				</div>
 			)}
-			<List data={data} loading={loading} />
+			{processesError && (
+				<div className="mb-4">
+					<Alert variant="danger" title="Es ist ein Fehler aufgetreten">
+						<Typography.Text>{processesError}</Typography.Text>
+					</Alert>
+				</div>
+			)}
+			{nextProcesses.length > 0 && (
+				<>
+					<NextCall {...firstItem} serviceType={firstItemServiceType} />
+					<h2 className="mb-2 mt-8">Nächste Aufrufe</h2>
+					<hr className="mb-3" />
+					<List processes={nextProcesses} />
+				</>
+			)}
+			{calledProcesses.length > 0 && (
+				<>
+					<h2 className="mb-2 mt-8">Im Bearbeitung</h2>
+					<hr className="mb-3" />
+					<List processes={calledProcesses} />
+				</>
+			)}
+			{doneProcesses.length > 0 && (
+				<>
+					<h2 className="mb-2 mt-8">Erledigt</h2>
+					<hr className="mb-3" />
+					<List processes={doneProcesses} />
+				</>
+			)}
 		</>
 	);
 };
