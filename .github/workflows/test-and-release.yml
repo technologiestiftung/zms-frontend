@@ -6,7 +6,12 @@ on:
   pull_request:
     branches: [main, staging]
   workflow_dispatch:
-
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
+        required: false
+        default: false
 jobs:
   test:
     env:
@@ -39,6 +44,12 @@ jobs:
       - run: npm ci
       - run: npm t --if-present
       - run: npm run build --if-present
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 15
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
       - run: supabase stop
 
   release:
