@@ -1,3 +1,15 @@
+# [1.4.0-rc.2](https://github.com/technologiestiftung/zms-supabase/compare/v1.4.0-rc.1...v1.4.0-rc.2) (2022-10-19)
+
+
+### Bug Fixes
+
+* Typo ([68a9473](https://github.com/technologiestiftung/zms-supabase/commit/68a94732c3f1ed7257946df7f81646b75473efe4))
+
+
+### Features
+
+* Add multi-select ([db0316a](https://github.com/technologiestiftung/zms-supabase/commit/db0316a1323a459b8ef765a70818f285128a4a6b))
+
 # [1.4.0](https://github.com/technologiestiftung/zms-supabase/compare/v1.3.0...v1.4.0) (2022-10-19)
 
 
