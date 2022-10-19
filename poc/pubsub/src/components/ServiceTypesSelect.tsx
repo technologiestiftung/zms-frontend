@@ -37,7 +37,7 @@ export const ServiceTypesSelect: FC<ServiceTypesSelectPropsType> = ({
 						</span>
 					))
 				) : (
-					<span className="ml-3 text-gray-400">Kein Auswahl</span>
+					<span className="ml-3 text-gray-400">Keine Auswahl</span>
 				)}
 			</div>
 		);
