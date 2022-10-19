@@ -92,3 +92,18 @@ ALTER TABLE "public"."processes"
 ALTER TABLE "public"."processes"
 	ADD COLUMN "active" boolean NOT NULL DEFAULT TRUE;
 
+ALTER TABLE public.service_types RENAME COLUMN name TO "text";
+
+-- add id and text constraint to public.service_types
+ALTER TABLE public.service_types
+	ALTER COLUMN "text" SET NOT NULL;
+
+ALTER TABLE public.service_types
+	ADD UNIQUE ("text", id);
+
+ALTER TABLE public.service_types
+	ADD UNIQUE ("text");
+
+ALTER TABLE public.processes
+	DROP COLUMN IF EXISTS service_type_id;
+

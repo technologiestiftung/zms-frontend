@@ -1,65 +1,41 @@
-import React, { useEffect, useState } from "react";
-import { Auth, Typography, Button, Alert } from "@supabase/ui";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { Process, supabase } from "../App";
-import { List } from "./List";
+import { Auth, IconFlag, IconMonitor, Tabs } from "@supabase/ui";
+import { useState } from "react";
+import { DeskService } from "../tabs/DeskService";
+import { ReceptionService } from "../tabs/ReceptionService";
+import { Header } from "./Header";
 
 interface ContainerProps {
-	supabaseClient: SupabaseClient;
 	children: JSX.Element | JSX.Element[];
 }
-export const Container = ({
-	supabaseClient,
-	children,
-}: ContainerProps): JSX.Element => {
-	const [change, setChange] = useState<number>(0);
-	const [data, setData] = useState<Process[]>([]);
-	const [loading, setLoading] = useState<boolean>(false);
+export const Container = ({ children }: ContainerProps): JSX.Element => {
 	const { user } = Auth.useUser();
-	const sub = supabaseClient
-		.from("processes")
-		.on("*", (payload) => {
-			console.info("change detected!", payload);
-			setChange((prev) => prev + 1);
-		})
-		.subscribe();
-	useEffect(() => {
-		if (!user) return;
-		const fetch = async () => {
-			setLoading(true);
-			const { data: processes, error } = await supabase
-				.from<Process>("processes")
-				.select("*")
-				.filter("active", "eq", true);
-			if (error) {
-				console.error(error);
-				throw error;
-			}
-			// console.info(processes);
-			setData(processes);
-			setLoading(false);
-		};
-		fetch().catch(console.error);
-	}, [user, change]);
+	const [activeTab, setActiveTab] = useState<string>("reception");
 
-	// useEffect(() => {
-	// 	if (!user) return;
-	// }, [user]);
-
-	if (user)
-		return (
-			<>
-				<div>
-					<Alert title="Change Detected">
-						<Typography.Text> Number of changes: {change}</Typography.Text>
-					</Alert>
+	return (
+		<div className="p-4 text-lg container mx-auto">
+			{!user || Array.isArray(children) ? (
+				<div className="flex flex-col items-center justify-center h-screen">
+					<h1 className="text-2xl font-bold">Login / Signup</h1>
+					<div className="max-w-sm">{children}</div>
 				</div>
-				<List data={data} loading={loading} />
-				<Typography.Text>Signed in: {user.email}</Typography.Text>
-				<Button block onClick={() => supabaseClient.auth.signOut()}>
-					Sign out
-				</Button>
-			</>
-		);
-	return Array.isArray(children) ? ((<>children</>) as JSX.Element) : children;
+			) : (
+				<>
+					<Header />
+					<Tabs
+						type="underlined"
+						size="medium"
+						activeId={activeTab}
+						onChange={setActiveTab}
+					>
+						<Tabs.Panel id="reception" label="Empfang" icon={<IconFlag />}>
+							<ReceptionService />
+						</Tabs.Panel>
+						<Tabs.Panel id="desk" label="Dienstplatz" icon={<IconMonitor />}>
+							<DeskService />
+						</Tabs.Panel>
+					</Tabs>
+				</>
+			)}
+		</div>
+	);
 };
