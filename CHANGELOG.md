@@ -1,3 +1,15 @@
+# [1.1.0-rc.3](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.2...v1.1.0-rc.3) (2022-10-19)
+
+
+### Bug Fixes
+
+* migration ([9782981](https://github.com/technologiestiftung/zms-supabase/commit/9782981d1a92c0b31e52f92fbf823b3ccb20577b))
+
+
+### Features
+
+* Add function to compute scores ([0e35500](https://github.com/technologiestiftung/zms-supabase/commit/0e355005b5c2fb49b708beccecfde98521b2618c))
+
 # [1.1.0-rc.2](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.1...v1.1.0-rc.2) (2022-10-18)
 
 
