@@ -16,7 +16,8 @@
     "date-fns": "2.29.3",
     "mock-progress-react": "1.0.8",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-multi-select-component": "4.3.4"
   },
   "devDependencies": {
     "@types/react": "18.0.17",

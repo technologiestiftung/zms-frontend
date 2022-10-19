@@ -28,9 +28,6 @@ export const DeskService: FC = () => {
 		(p) => !p.start_time && !p.end_time
 	);
 	const firstItem = nextProcesses[0];
-	const firstItemServiceType = serviceTypes.find(
-		({ id }) => id === firstItem?.service_type_id
-	);
 	return (
 		<>
 			{nextProcesses.length === 0 && (
@@ -51,7 +48,7 @@ export const DeskService: FC = () => {
 			)}
 			{nextProcesses.length > 0 && (
 				<>
-					<NextCall {...firstItem} serviceType={firstItemServiceType} />
+					<NextCall {...firstItem} />
 					<h2 className="mb-2 mt-8">Nächste Aufrufe</h2>
 					<hr className="mb-3" />
 					<List processes={nextProcesses} />

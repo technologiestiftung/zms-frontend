@@ -62,4 +62,31 @@
 	[class~="bg-brand"] button[class~="sbui-btn-secondary"]:hover {
 		@apply bg-white;
 	}
+
+	[class~="rmsc"] [class~="dropdown-heading"] {
+		height: auto;
+		min-height: 47px;
+		padding: 6px;
+	}
+
+	[class~="rmsc"] [class~="dropdown-container"] {
+		@apply rounded-md text-sm;
+	}
+
+	[class~="rmsc"] [class~="dropdown-container"]:focus-within {
+		@apply outline-none shadow-none border border-brandLight;
+		box-shadow: 0 0 0 2px rgb(62 207 142 / 10%);
+		border-color: rgba(159, 231, 199, var(--tw-border-opacity));
+	}
+
+	[class~="error"] [class~="dropdown-container"],
+	[class~="error"] [class~="dropdown-container"]:focus-within {
+		@apply outline-none shadow-none border border-brandLight;
+		box-shadow: 0 0 0 2px rgba(207, 62, 62, 0.1);
+		border-color: rgba(207, 62, 62, var(--tw-border-opacity));
+	}
+
+	[class~="error"] [class~="dropdown-container"]:focus-within {
+		border-width: 2px;
+	}
 }

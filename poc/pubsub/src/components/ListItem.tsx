@@ -20,22 +20,28 @@ const Td: FC<HTMLProps<HTMLTableCellElement>> = ({ children, className }) => (
 
 export const ListItem: FC<ProcessType> = ({ ...process }) => {
 	const [serviceTypes] = useStore((s) => s.serviceTypes);
-	const { service_id, scheduled_time, check_in_time, service_type_id } =
-		process;
-	const serviceType = serviceTypes.find(
-		(serviceType) => serviceType.id === service_type_id
-	);
+	const { service_id, scheduled_time, check_in_time, service_types } = process;
+	const processServiceTypes = service_types
+		.map(
+			(s) => serviceTypes.find((serviceType) => serviceType.id === s.id)?.name
+		)
+		.filter(Boolean)
+		.join(", ");
 	return (
 		<tr className="group">
-			<Td>{service_id}</Td>
-			<Td>{check_in_time ? format(new Date(check_in_time), "HH:mm") : ""}</Td>
-			<Td>{scheduled_time ? format(new Date(scheduled_time), "HH:mm") : ""}</Td>
+			<Td className="w-20">{service_id}</Td>
+			<Td className="w-20">
+				{check_in_time ? format(new Date(check_in_time), "HH:mm") : ""}
+			</Td>
+			<Td className="w-20">
+				{scheduled_time ? format(new Date(scheduled_time), "HH:mm") : ""}
+			</Td>
 			<Td>
 				<span
-					className="truncate max-w-xs inline-block"
-					title={serviceType?.name || ""}
+					className="truncate max-w-md inline-block"
+					title={processServiceTypes}
 				>
-					{serviceType?.name}
+					{processServiceTypes}
 				</span>
 			</Td>
 			<Td className="w-96">
