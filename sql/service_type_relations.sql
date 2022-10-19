@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION add_service_types_to_process (pid int, service_type_i
 	RETURNS TABLE (
 		process_id int,
 		service_type_id int)
-	SECURITY DEFINER
+	SECURITY INVOKER
 	LANGUAGE plpgsql
 	AS $$
 DECLARE
