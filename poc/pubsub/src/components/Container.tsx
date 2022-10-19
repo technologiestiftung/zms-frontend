@@ -55,10 +55,19 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 	}, [setStore]);
 
 	const updateList = useCallback(async () => {
-		const { data: processes, error } = await supabase
-			.from<ProcessType>("processes")
-			.select("*")
-			.filter("active", "eq", true);
+		const { data: processes, error } = await supabase.from<ProcessType>(
+			"processes"
+		).select(`
+				id,
+				service_id,
+				scheduled_time,
+				start_time,
+				end_time,
+				notes,
+				score,
+				check_in_time,
+				service_types(id)
+			`);
 
 		if (error) {
 			console.error(error);

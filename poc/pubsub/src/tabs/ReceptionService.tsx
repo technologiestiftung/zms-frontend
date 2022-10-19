@@ -1,22 +1,25 @@
 import { Alert, Auth, Input, Select, Typography } from "@supabase/ui";
 import { FC, useRef, FormEventHandler, useCallback, useState } from "react";
 import { supabase } from "../utils/supabase";
-import { useServiceTypes } from "../utils/useServiceTypes";
 import { setMinutes, setHours } from "date-fns";
 import { useStore } from "../utils/Store";
+import { RawProcessType } from "../clean-types";
 
 const parseFormData = (
 	data: FormData
 ): {
-	serviceId: string;
+	serviceId: number;
 	serviceTypeId: number;
 	scheduledDate: Date;
 } => {
-	const serviceId = data.get("serviceId") as string;
-
 	const rawScheduledTime = data.get("scheduledTime") as string;
 	const [hours, minutes] = rawScheduledTime.split(":");
 	const scheduledDate = setMinutes(setHours(new Date(), +hours), +minutes);
+
+	const rawServiceId = data.get("serviceId") as string;
+	const serviceId = (
+		typeof rawServiceId === "string" ? parseInt(rawServiceId, 10) : 1
+	) as number;
 
 	const rawServiceTypeId = data.get("serviceTypeId") || "1";
 	const serviceTypeId = (
@@ -48,17 +51,32 @@ export const ReceptionService: FC = () => {
 			const { serviceId, serviceTypeId, scheduledDate } =
 				parseFormData(rawData);
 
-			const { error } = await supabase.from("processes").insert([
-				{
-					service_id: serviceId,
-					service_type_id: serviceTypeId,
-					scheduled_time: scheduledDate.toISOString(),
-				},
-			]);
+			const { data, error } = await supabase
+				.from<RawProcessType>("processes")
+				.insert([
+					{
+						service_id: serviceId,
+						scheduled_time: scheduledDate.toISOString(),
+					},
+				]);
 
 			if (error) {
 				setError(error.message);
 				return;
+			}
+
+			if (!data || data.length === 0) {
+				setError("Adding the process didn't work");
+				return;
+			}
+
+			try {
+				await supabase.rpc("add_service_types_to_process", {
+					pid: data[0].id,
+					service_type_ids: [serviceTypeId],
+				});
+			} catch (err) {
+				setError((err as Error).message);
 			}
 
 			const serviceType = serviceTypes.find(({ id }) => id === serviceTypeId);

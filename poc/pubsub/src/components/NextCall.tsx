@@ -6,18 +6,16 @@ import classNames from "../utils/classNames";
 import { useStore } from "../utils/Store";
 import { ProcessActions } from "./ProcessActions";
 
-interface NextCallPropsType extends ProcessType {
-	serviceType?: ServiceType | null;
-}
-
-export const NextCall: FC<NextCallPropsType> = ({
-	serviceType,
-	...nextProcess
-}) => {
+export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 	const [processInProgress] = useStore((s) => s.processInProgress);
+	const [serviceTypes] = useStore((s) => s.serviceTypes);
 	const process = processInProgress || nextProcess;
 	const { service_id, check_in_time, scheduled_time } = process;
 	const inProgress = !!processInProgress;
+
+	const processServiceTypes = process.service_types
+		.map((s) => serviceTypes.find((serviceType) => serviceType.id === s.id))
+		.filter(Boolean) as ServiceType[];
 
 	const progressTitleText = classNames(
 		`In Arbeit: Bitte person mit der ID ${service_id} im ZMS aufrufen`
@@ -57,12 +55,19 @@ export const NextCall: FC<NextCallPropsType> = ({
 							{format(new Date(scheduled_time), "HH:mm")}
 						</span>
 					)}
-					{serviceType?.name && (
+					{processServiceTypes.length > 0 && (
 						<span>
-							<strong className="block">Dienstleistung: </strong>
-							<div className="truncate max-w-xs" title={serviceType?.name}>
-								{serviceType?.name}
-							</div>
+							<strong className="block">
+								{processServiceTypes.length > 1
+									? "Dienstleistungen"
+									: "Dienstleistung"}
+								:{" "}
+							</strong>
+							{processServiceTypes.map((s) => (
+								<div className="truncate max-w-xs" key={s.id} title={s.name}>
+									{s?.name}
+								</div>
+							))}
 						</span>
 					)}
 				</div>

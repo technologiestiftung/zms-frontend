@@ -14,7 +14,7 @@ export const List: FC<{
 					<td className="pb-3">ZMS ID</td>
 					<td className="pb-3">Checkin</td>
 					<td className="pb-3">Termin</td>
-					<td className="pb-3">Dienstleistung</td>
+					<td className="pb-3">Dienstleistung(en)</td>
 					<td className="pb-3"></td>
 				</tr>
 			</thead>

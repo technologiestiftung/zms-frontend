@@ -72,7 +72,6 @@ export const EditProcessForm: FC = () => {
 				.from<ProcessType>("processes")
 				.update({
 					service_id: parsedData.serviceId,
-					service_type_id: parsedData.serviceTypeId,
 					scheduled_time: parsedData.scheduledDate.toISOString(),
 					check_in_time: parsedData.checkinDate.toISOString(),
 					start_time: parsedData.startDate?.toISOString(),
@@ -85,9 +84,18 @@ export const EditProcessForm: FC = () => {
 				return;
 			}
 
+			try {
+				await supabase.rpc("add_service_types_to_process", {
+					pid: currentlyEditedProcess.id,
+					service_type_ids: [parsedData.serviceTypeId],
+				});
+			} catch (err) {
+				setError((err as Error).message);
+			}
+
 			setStore({ currentlyEditedProcess: null, actionLoading: false });
 		},
-		[currentlyEditedProcess]
+		[currentlyEditedProcess, setStore]
 	);
 
 	if (!currentlyEditedProcess) return null;
@@ -117,7 +125,6 @@ export const EditProcessForm: FC = () => {
 							name="serviceTypeId"
 							label="Erbrachte Dienstleistung"
 							required
-							defaultValue={`${currentlyEditedProcess.service_type_id}`}
 						>
 							{serviceTypes.map((serviceType) => (
 								<Select.Option value={`${serviceType.id}`} key={serviceType.id}>
