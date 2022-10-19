@@ -43,7 +43,7 @@ ALTER TABLE "public"."service_types"
 
 SET check_function_bodies = OFF;
 
-CREATE OR REPLACE FUNCTION public.add_service_types_to_process (_process_id integer, service_type_ids integer[])
+CREATE OR REPLACE FUNCTION public.add_service_types_to_process (pid integer, service_type_ids integer[])
 	RETURNS TABLE (
 		process_id integer,
 		service_type_id integer)
@@ -54,10 +54,10 @@ DECLARE
 	service_type_id int;
 BEGIN
 	DELETE FROM public.process_service_types p
-	WHERE p.process_id = _process_id;
+	WHERE p.process_id = pid;
 	foreach service_type_id IN ARRAY service_type_ids LOOP
 		INSERT INTO public.process_service_types (process_id, service_type_id)
-			VALUES (_process_id, service_type_id)
+			VALUES (pid, service_type_id)
 		ON CONFLICT ON CONSTRAINT process_service_type_pkey
 			DO NOTHING;
 	END LOOP;
@@ -68,7 +68,7 @@ BEGIN
 	FROM
 		public.process_service_types ppst
 	WHERE
-		ppst.process_id = _process_id;
+		ppst.process_id = pid;
 END;
 $function$;
 

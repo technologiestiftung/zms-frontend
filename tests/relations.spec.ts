@@ -45,7 +45,6 @@ describe("relations table", () => {
 			pid: p_data[0].id,
 			service_type_ids: [1, 2, 3],
 		});
-
 		const { data, error } = await usersClient
 			.from("processes")
 			.select(
