@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/technologiestiftung/zms-supabase/compare/v1.2.0...v1.3.0) (2022-10-19)
+
+
+### Features
+
+* **rls relation:** Add RLS to relation ([1a5dd9d](https://github.com/technologiestiftung/zms-supabase/commit/1a5dd9d754f9b676854ce442c89a6142885e9ec5))
+
 # [1.3.0-rc.1](https://github.com/technologiestiftung/zms-supabase/compare/v1.2.0...v1.3.0-rc.1) (2022-10-19)
 
 
