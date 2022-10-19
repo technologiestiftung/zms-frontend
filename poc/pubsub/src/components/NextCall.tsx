@@ -39,18 +39,16 @@ export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 			<h1 className="text-2xl font-bold mb-2">{title}</h1>
 			<div className="flex gap-6 justify-between flex-wrap">
 				<div className="flex gap-8 text-sm">
-					<span>
+					<span className="w-16">
 						<strong className="block">ZMS ID: </strong>
 						{service_id}
 					</span>
-					{
-						<span>
-							<strong className="block">Checkin: </strong>
-							{format(new Date(check_in_time), "HH:mm")}
-						</span>
-					}
+					<span className="w-16">
+						<strong className="block">Checkin: </strong>
+						{format(new Date(check_in_time), "HH:mm")}
+					</span>
 					{scheduled_time && (
-						<span>
+						<span className="w-16">
 							<strong className="block">Termin: </strong>
 							{format(new Date(scheduled_time), "HH:mm")}
 						</span>
@@ -64,7 +62,7 @@ export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 								:{" "}
 							</strong>
 							{processServiceTypes.map((s) => (
-								<div className="truncate max-w-xs" key={s.id} title={s.name}>
+								<div className="truncate max-w-md" key={s.id} title={s.name}>
 									{s?.name}
 								</div>
 							))}

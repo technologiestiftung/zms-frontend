@@ -29,12 +29,16 @@ export const ListItem: FC<ProcessType> = ({ ...process }) => {
 		.join(", ");
 	return (
 		<tr className="group">
-			<Td>{service_id}</Td>
-			<Td>{check_in_time ? format(new Date(check_in_time), "HH:mm") : ""}</Td>
-			<Td>{scheduled_time ? format(new Date(scheduled_time), "HH:mm") : ""}</Td>
+			<Td className="w-20">{service_id}</Td>
+			<Td className="w-20">
+				{check_in_time ? format(new Date(check_in_time), "HH:mm") : ""}
+			</Td>
+			<Td className="w-20">
+				{scheduled_time ? format(new Date(scheduled_time), "HH:mm") : ""}
+			</Td>
 			<Td>
 				<span
-					className="truncate max-w-xs inline-block"
+					className="truncate max-w-md inline-block"
 					title={processServiceTypes}
 				>
 					{processServiceTypes}
