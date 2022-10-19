@@ -2,27 +2,37 @@ import { Alert, Auth, Input, Select, Typography } from "@supabase/ui";
 import { FC, useRef, FormEventHandler, useCallback, useState } from "react";
 import { supabase } from "../utils/supabase";
 import { useServiceTypes } from "../utils/useServiceTypes";
+import { setMinutes, setHours } from "date-fns";
+import { useStore } from "../utils/Store";
 
 const parseFormData = (
 	data: FormData
 ): {
 	serviceId: string;
 	serviceTypeId: number;
+	scheduledDate: Date;
 } => {
 	const serviceId = data.get("serviceId") as string;
+
+	const rawScheduledTime = data.get("scheduledTime") as string;
+	const [hours, minutes] = rawScheduledTime.split(":");
+	const scheduledDate = setMinutes(setHours(new Date(), +hours), +minutes);
+
 	const rawServiceTypeId = data.get("serviceTypeId") || "1";
 	const serviceTypeId = (
 		typeof rawServiceTypeId === "string" ? parseInt(rawServiceTypeId, 10) : 1
 	) as number;
-	return { serviceId, serviceTypeId };
+
+	return { serviceId, serviceTypeId, scheduledDate };
 };
 
 export const ReceptionService: FC = () => {
 	const formRef = useRef<HTMLFormElement | null>(null);
 	const { user } = Auth.useUser();
+	const [serviceTypes] = useStore((s) => s.serviceTypes);
+	const [serviceTypesError] = useStore((s) => s.serviceTypesError);
 	const [error, setError] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
-	const { error: serviceTypesError, serviceTypes } = useServiceTypes();
 
 	const submitHandler = useCallback<FormEventHandler<HTMLFormElement>>(
 		async (evt): Promise<void> => {
@@ -35,12 +45,14 @@ export const ReceptionService: FC = () => {
 			if (!formRef.current) return;
 
 			const rawData = new FormData(formRef.current);
-			const { serviceId, serviceTypeId } = parseFormData(rawData);
+			const { serviceId, serviceTypeId, scheduledDate } =
+				parseFormData(rawData);
 
 			const { error } = await supabase.from("processes").insert([
 				{
 					service_id: serviceId,
 					service_type_id: serviceTypeId,
+					scheduled_time: scheduledDate.toISOString(),
 				},
 			]);
 
@@ -104,6 +116,13 @@ export const ReceptionService: FC = () => {
 							</Select.Option>
 						))}
 					</Select>
+					<Input
+						name="scheduledTime"
+						placeholder="Urzeit der ZMS Termin"
+						label="Uhrzeit des ursprünglichen Termins (Nicht des Checkins)"
+						required
+						type="time"
+					/>
 				</fieldset>
 				<div className="sbui-btn-container">
 					<input

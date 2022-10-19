@@ -1,23 +1,32 @@
+import { FC } from "react";
+import { ProcessType } from "../clean-types";
+import { useStore } from "../utils/Store";
 import { ListItem } from "./ListItem";
-import { Process } from "../App";
 
-export const List: React.FC<{ data: Process[]; loading: boolean }> = ({
-	data,
-	loading,
-}) => {
+export const List: FC<{
+	processes: ProcessType[];
+}> = ({ processes }) => {
+	const [processesLoading] = useStore((s) => s.processesLoading);
 	return (
-		<ul>
-			{!loading ? (
-				data.map((item) => (
-					<ListItem
-						key={item.id}
-						service_id={item.service_id}
-						score={item.score}
-					/>
-				))
-			) : (
-				<ListItem service_id={"Loading"} score={null} />
-			)}
-		</ul>
+		<table className="w-full text-sm">
+			<thead className="font-bold border-b">
+				<tr>
+					<td className="pb-3">ZMS ID</td>
+					<td className="pb-3">Checkin</td>
+					<td className="pb-3">Termin</td>
+					<td className="pb-3">Dienstleistung</td>
+					<td className="pb-3"></td>
+				</tr>
+			</thead>
+			<tbody>
+				{!processesLoading ? (
+					processes.map((process) => <ListItem key={process.id} {...process} />)
+				) : (
+					<tr>
+						<td colSpan={6}>Lädt...</td>
+					</tr>
+				)}
+			</tbody>
+		</table>
 	);
 };
