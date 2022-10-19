@@ -1,3 +1,10 @@
+# [1.1.0-rc.4](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.3...v1.1.0-rc.4) (2022-10-19)
+
+
+### Bug Fixes
+
+* RLS for update ([ea6b9d8](https://github.com/technologiestiftung/zms-supabase/commit/ea6b9d836485a4360b74a70ce3aabfbc097295a8))
+
 # [1.1.0-rc.3](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.2...v1.1.0-rc.3) (2022-10-19)
 
 
