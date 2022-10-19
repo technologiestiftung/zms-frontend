@@ -1,3 +1,10 @@
+# [1.1.0-rc.5](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.4...v1.1.0-rc.5) (2022-10-19)
+
+
+### Features
+
+* Drop column active from processes table ([e260107](https://github.com/technologiestiftung/zms-supabase/commit/e260107ac6a94c23c5a769fb2df10b8f2a4eb5db))
+
 # [1.1.0-rc.4](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0-rc.3...v1.1.0-rc.4) (2022-10-19)
 
 
