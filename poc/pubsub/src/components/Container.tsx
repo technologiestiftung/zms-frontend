@@ -21,6 +21,15 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 	const [change, setChange] = useState<number>(0);
 
 	useEffect(() => {
+		if (processInProgress) return;
+		const ownedProcessInProgress = processes.find(
+			(p) => p.profile_id === user?.id && p.start_time && !p.end_time
+		);
+		if (!ownedProcessInProgress) return;
+		setStore({ processInProgress: ownedProcessInProgress });
+	}, [processInProgress, processes, setStore]);
+
+	useEffect(() => {
 		if (!processInProgress) return;
 		const progressProcess = processes.find(
 			(p) => p.id === processInProgress.id
@@ -66,6 +75,7 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 				notes,
 				score,
 				check_in_time,
+				profile_id,
 				service_types(id)
 			`);
 

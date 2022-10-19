@@ -33,6 +33,7 @@ export interface Database {
 					notes: string | null;
 					score: number | null;
 					check_in_time: string;
+					profile_id: string | null;
 				};
 				Insert: {
 					id?: number;
@@ -43,6 +44,7 @@ export interface Database {
 					notes?: string | null;
 					score?: number | null;
 					check_in_time?: string;
+					profile_id?: string | null;
 				};
 				Update: {
 					id?: number;
@@ -53,6 +55,7 @@ export interface Database {
 					notes?: string | null;
 					score?: number | null;
 					check_in_time?: string;
+					profile_id?: string | null;
 				};
 			};
 			profiles: {
