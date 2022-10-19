@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/technologiestiftung/zms-supabase/compare/v1.1.0...v1.2.0) (2022-10-19)
+
+
+### Features
+
+* Add different states in DB and interface ([7983dd0](https://github.com/technologiestiftung/zms-supabase/commit/7983dd069d4deaafada82dde26301490af26b018))
+* Add loading indicator ([97a4dfb](https://github.com/technologiestiftung/zms-supabase/commit/97a4dfbaec6518bbbf25f5ce7f13269b492bf99e))
+* Add Store to manage state ([6eae583](https://github.com/technologiestiftung/zms-supabase/commit/6eae583f3bf09b8ba783847587b1e3b48e5873e4))
+* Edit process form ([d060f52](https://github.com/technologiestiftung/zms-supabase/commit/d060f52c3bf0168a4577c81cc719bc76e0a42557))
+* Make actions modify the DB ([3042997](https://github.com/technologiestiftung/zms-supabase/commit/304299708112b9d86e8e35c01c32b3a518f86611))
+* New time input and table display ([caee301](https://github.com/technologiestiftung/zms-supabase/commit/caee301f3d1b83dcbebaceff113ea309ff815e4f))
+* Show only processes of today ([07f3856](https://github.com/technologiestiftung/zms-supabase/commit/07f3856cf2097b1ae2307af3ef5da1a0b7601c4e))
+
 # [1.1.0](https://github.com/technologiestiftung/zms-supabase/compare/v1.0.1...v1.1.0) (2022-10-19)
 
 
