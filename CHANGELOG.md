@@ -1,3 +1,11 @@
+# [1.4.0-rc.3](https://github.com/technologiestiftung/zms-supabase/compare/v1.4.0-rc.2...v1.4.0-rc.3) (2022-10-20)
+
+
+### Features
+
+* Associate to user ([692a2f1](https://github.com/technologiestiftung/zms-supabase/commit/692a2f1c25994f849ac2bfd5e727b30c07ccb59c))
+* **ZMSP-32:** Add Text Area for notes ([82724e6](https://github.com/technologiestiftung/zms-supabase/commit/82724e6d99ea6ce23a402e7a46cfc6575901f74c))
+
 # [1.4.0-rc.2](https://github.com/technologiestiftung/zms-supabase/compare/v1.4.0-rc.1...v1.4.0-rc.2) (2022-10-19)
 
 
