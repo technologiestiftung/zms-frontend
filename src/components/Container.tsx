@@ -49,49 +49,43 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 		}
 	}, [processInProgress, processes, setStore]);
 
-	useEffect(() => {
-		const loadServiceTypes = async (): Promise<void> => {
-			const { data, error } = await supabase
-				.from<ServiceType>("service_types")
-				.select("id,name");
-			if (error) {
-				setStore({
-					serviceTypesError: error.message,
-					serviceTypesLoading: false,
-				});
-				return;
-			}
+	const updateServiceTypes = useCallback(async (): Promise<void> => {
+		const { data, error } = await supabase
+			.from<ServiceType>("service_types")
+			.select("id,name");
+		if (error) {
 			setStore({
-				serviceTypes: data,
+				serviceTypesError: error.message,
 				serviceTypesLoading: false,
-				serviceTypesError: null,
 			});
-		};
-		loadServiceTypes();
+			return;
+		}
+		setStore({
+			serviceTypes: data,
+			serviceTypesLoading: false,
+			serviceTypesError: null,
+		});
 	}, [setStore]);
 
-	useEffect(() => {
-		const loadProfiles = async (): Promise<void> => {
-			const { data, error } = await supabase
-				.from<ProfileType>("profiles")
-				.select("id,description");
-			if (error) {
-				setStore({
-					profilesError: error.message,
-					profilesLoading: false,
-				});
-				return;
-			}
+	const updateProfiles = useCallback(async (): Promise<void> => {
+		const { data, error } = await supabase
+			.from<ProfileType>("profiles")
+			.select("id,description");
+		if (error) {
 			setStore({
-				profiles: data.reduce(
-					(acc, profile) => ({ ...acc, [profile.id]: profile.description }),
-					{}
-				),
+				profilesError: error.message,
 				profilesLoading: false,
-				profilesError: null,
 			});
-		};
-		loadProfiles();
+			return;
+		}
+		setStore({
+			profiles: data.reduce(
+				(acc, profile) => ({ ...acc, [profile.id]: profile.description }),
+				{}
+			),
+			profilesLoading: false,
+			profilesError: null,
+		});
 	}, [setStore]);
 
 	const updateList = useCallback(async () => {
@@ -150,6 +144,12 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 		if (!user) return;
 		updateList();
 	}, [user, change, updateList]);
+
+	useEffect(() => {
+		if (!user) return;
+		updateProfiles();
+		updateServiceTypes();
+	}, [user, updateProfiles, updateServiceTypes]);
 
 	return (
 		<>

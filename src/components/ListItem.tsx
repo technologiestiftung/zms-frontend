@@ -40,7 +40,7 @@ export const ListItem: FC<ListItemPropsType> = ({
 		.join(", ");
 	return (
 		<tr className="group">
-			<Td className="w-20">{service_id}</Td>
+			<Td className="w-28 break-all">{service_id}</Td>
 			<Td className="w-20">
 				{check_in_time ? format(new Date(check_in_time), "HH:mm") : ""}
 			</Td>

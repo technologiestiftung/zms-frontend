@@ -124,7 +124,7 @@ export const ReceptionService: FC = () => {
 				.filter(Boolean)
 				.join(", ");
 			setSuccessMsg(
-				`Ein neuer Checkin für die Dienstlietung(en) "${processServiceTypes}" mit id "${serviceId}" wurde angelegt.`
+				`Ein neuer Checkin für die Dienstleistung(en) "${processServiceTypes}" mit id "${serviceId}" wurde angelegt.`
 			);
 
 			formRef.current.reset();

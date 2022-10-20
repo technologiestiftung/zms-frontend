@@ -33,7 +33,7 @@ export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 			<h1 className="text-2xl font-bold mb-2">{title}</h1>
 			<div className="flex gap-6 justify-between flex-wrap">
 				<div className="flex gap-8 text-sm">
-					<span className="w-16">
+					<span className="w-28 break-all">
 						<strong className="block">ZMS ID: </strong>
 						{service_id}
 					</span>
