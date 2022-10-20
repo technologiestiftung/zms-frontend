@@ -26,7 +26,7 @@ export interface Database {
 			processes: {
 				Row: {
 					id: number;
-					service_id: number;
+					service_id: string;
 					scheduled_time: string;
 					start_time: string | null;
 					end_time: string | null;
@@ -37,7 +37,7 @@ export interface Database {
 				};
 				Insert: {
 					id?: number;
-					service_id: number;
+					service_id: string;
 					scheduled_time: string;
 					start_time?: string | null;
 					end_time?: string | null;
@@ -48,7 +48,7 @@ export interface Database {
 				};
 				Update: {
 					id?: number;
-					service_id?: number;
+					service_id?: string;
 					scheduled_time?: string;
 					start_time?: string | null;
 					end_time?: string | null;

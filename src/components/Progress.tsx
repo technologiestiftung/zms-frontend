@@ -36,7 +36,11 @@ export const Progress: FC = () => {
 	const [show, setShow] = useState(false);
 	const [renderBar, setRenderBar] = useState(false);
 	const [isLoading] = useStore(
-		(s) => s.actionLoading || s.processesLoading || s.serviceTypesLoading
+		(s) =>
+			s.profilesLoading ||
+			s.actionLoading ||
+			s.processesLoading ||
+			s.serviceTypesLoading
 	);
 
 	useEffect(() => {

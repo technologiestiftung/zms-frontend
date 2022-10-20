@@ -20,7 +20,7 @@ const parseFormData = (
 	data: FormData,
 	serviceTypesValue: ValueType
 ): {
-	serviceId: number;
+	serviceId: string;
 	serviceTypeIds: number[];
 	scheduledDate: Date;
 	notes: string | null;
@@ -29,10 +29,7 @@ const parseFormData = (
 	const [hours, minutes] = rawScheduledTime.split(":");
 	const scheduledDate = setMinutes(setHours(new Date(), +hours), +minutes);
 
-	const rawServiceId = data.get("serviceId") as string;
-	const serviceId = (
-		typeof rawServiceId === "string" ? parseInt(rawServiceId, 10) : 1
-	) as number;
+	const serviceId = data.get("serviceId") as string;
 
 	const notes = data.get("notes") as string | null;
 
@@ -170,7 +167,6 @@ export const ReceptionService: FC = () => {
 						placeholder="Geben Sie das ZMS ID hier ein"
 						label="ZMS ID"
 						required
-						type="number"
 					/>
 					<ServiceTypesSelect
 						value={serviceTypesValue}
