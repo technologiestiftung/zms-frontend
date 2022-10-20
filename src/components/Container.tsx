@@ -1,7 +1,7 @@
 import { RealtimeSubscription } from "@supabase/supabase-js";
-import { Auth, IconFlag, IconMonitor, Tabs } from "@supabase/ui";
+import { Alert, Auth, IconFlag, IconMonitor, Tabs } from "@supabase/ui";
 import { useCallback, useEffect, useState } from "react";
-import { ProcessType, ServiceType } from "../clean-types";
+import { ProcessType, ProfileType, ServiceType } from "../clean-types";
 import { DeskService } from "../tabs/DeskService";
 import { ReceptionService } from "../tabs/ReceptionService";
 import { useStore } from "../utils/Store";
@@ -17,6 +17,13 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 	const { user } = Auth.useUser();
 	const [activeTab, setActiveTab] = useState<string>("reception");
 	const [processInProgress, setStore] = useStore((s) => s.processInProgress);
+	const [error] = useStore(
+		(s) =>
+			s.profilesError ||
+			s.actionError ||
+			s.processesError ||
+			s.serviceTypesError
+	);
 	const [processes] = useStore((s) => s.processes);
 	const [change, setChange] = useState<number>(0);
 
@@ -61,6 +68,30 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 			});
 		};
 		loadServiceTypes();
+	}, [setStore]);
+
+	useEffect(() => {
+		const loadProfiles = async (): Promise<void> => {
+			const { data, error } = await supabase
+				.from<ProfileType>("profiles")
+				.select("id,description");
+			if (error) {
+				setStore({
+					profilesError: error.message,
+					profilesLoading: false,
+				});
+				return;
+			}
+			setStore({
+				profiles: data.reduce(
+					(acc, profile) => ({ ...acc, [profile.id]: profile.description }),
+					{}
+				),
+				profilesLoading: false,
+				profilesError: null,
+			});
+		};
+		loadProfiles();
 	}, [setStore]);
 
 	const updateList = useCallback(async () => {
@@ -131,6 +162,15 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 				) : (
 					<>
 						<Header />
+						{error && (
+							<Alert
+								variant="danger"
+								title="Es ist einen Fehler aufgetreten"
+								closable
+							>
+								{error}
+							</Alert>
+						)}
 						<Tabs
 							type="underlined"
 							size="medium"

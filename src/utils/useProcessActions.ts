@@ -58,43 +58,46 @@ export const useProcessActions = (
 		});
 	}, [config, process, setStore, processes]);
 
-	const cancelProcessCall = useCallback(async () => {
-		setStore({
-			processInProgress: null,
-			actionLoading: true,
-			actionError: null,
-			processes: processes.map((p) => {
-				if (p.id === process.id) {
-					return { ...p, start_time: null, end_time: null, profile_id: null };
-				}
-				return p;
-			}),
-		});
-		const { error } = await supabase
-			.from<ProcessType>("processes")
-			.update({ start_time: null, end_time: null, profile_id: null })
-			.match({ id: process.id });
-		if (error) {
-			console.log(error);
-			config?.onError && config.onError(error.message, process);
+	const cancelProcessCall = useCallback(
+		async (processToCancel = process) => {
 			setStore({
-				actionLoading: false,
-				actionError: error.message,
-				processes,
+				processInProgress: null,
+				actionLoading: true,
+				actionError: null,
+				processes: processes.map((p) => {
+					if (p.id === processToCancel.id) {
+						return { ...p, start_time: null, end_time: null, profile_id: null };
+					}
+					return p;
+				}),
 			});
-			return;
-		}
-		config?.onCancelled && config.onCancelled(process);
-		setStore({
-			processInProgress: null,
-			actionLoading: false,
-			actionError: null,
-		});
-	}, [config, process, processes, setStore]);
+			const { error } = await supabase
+				.from<ProcessType>("processes")
+				.update({ start_time: null, end_time: null, profile_id: null })
+				.match({ id: processToCancel.id });
+			if (error) {
+				console.log(error);
+				config?.onError && config.onError(error.message, processToCancel);
+				setStore({
+					actionLoading: false,
+					actionError: error.message,
+					processes,
+				});
+				return;
+			}
+			config?.onCancelled && config.onCancelled(processToCancel);
+			setStore({
+				processInProgress: null,
+				actionLoading: false,
+				actionError: null,
+			});
+		},
+		[config, process, processes, setStore]
+	);
 
 	const callProcess = useCallback(async () => {
 		if (processInProgress) {
-			await cancelProcessCall();
+			await cancelProcessCall(processInProgress);
 		}
 		const start_time = new Date().toISOString();
 		setStore({

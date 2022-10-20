@@ -49,7 +49,7 @@ export const ProcessActions: FC<ProcessActionsPropsType> = ({
 				</Button>
 			)}
 			{isCalled && (
-				<Button onClick={cancelProcessCall} type="text">
+				<Button onClick={() => cancelProcessCall()} type="text">
 					Abbrechen
 				</Button>
 			)}

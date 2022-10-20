@@ -5,7 +5,8 @@ import { ListItem } from "./ListItem";
 
 export const List: FC<{
 	processes: ProcessType[];
-}> = ({ processes }) => {
+	showDesk?: boolean;
+}> = ({ processes, showDesk = true }) => {
 	const [processesLoading] = useStore((s) => s.processesLoading);
 	return (
 		<table className="w-full text-sm">
@@ -16,12 +17,15 @@ export const List: FC<{
 					<td className="pb-3">Termin</td>
 					<td className="pb-3">Dienstleistung(en)</td>
 					<td className="pb-3">Notizen</td>
+					{showDesk && <td className="pb-3">Platz</td>}
 					<td className="pb-3"></td>
 				</tr>
 			</thead>
 			<tbody>
 				{!processesLoading ? (
-					processes.map((process) => <ListItem key={process.id} {...process} />)
+					processes.map((process) => (
+						<ListItem key={process.id} showDesk={showDesk} {...process} />
+					))
 				) : (
 					<tr>
 						<td colSpan={6}>Lädt...</td>

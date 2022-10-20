@@ -12,6 +12,9 @@ export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 	const process = processInProgress || nextProcess;
 	const { service_id, check_in_time, scheduled_time } = process;
 	const inProgress = !!processInProgress;
+	const [profile] = useStore(
+		(s) => process?.profile_id && s.profiles[process?.profile_id]
+	);
 
 	const processServiceTypes = process.service_types
 		.map((s) => serviceTypes.find((serviceType) => serviceType.id === s.id))
@@ -74,6 +77,12 @@ export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 							<div className="max-w-sm" title={process.notes}>
 								{process.notes}
 							</div>
+						</span>
+					)}
+					{profile && (
+						<span className="w-16">
+							<strong className="block">Platz: </strong>
+							{profile}
 						</span>
 					)}
 				</div>
