@@ -51,7 +51,7 @@ export const DeskService: FC = () => {
 					<NextCall {...firstItem} />
 					<h2 className="mb-2 mt-8">Nächste Aufrufe</h2>
 					<hr className="mb-3" />
-					<List processes={nextProcesses} />
+					<List processes={nextProcesses} showDesk={false} />
 				</>
 			)}
 			{calledProcesses.length > 0 && (

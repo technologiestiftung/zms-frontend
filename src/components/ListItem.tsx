@@ -18,8 +18,18 @@ const Td: FC<HTMLProps<HTMLTableCellElement>> = ({ children, className }) => (
 	</td>
 );
 
-export const ListItem: FC<ProcessType> = ({ ...process }) => {
+interface ListItemPropsType extends ProcessType {
+	showDesk?: boolean;
+}
+
+export const ListItem: FC<ListItemPropsType> = ({
+	showDesk = true,
+	...process
+}) => {
 	const [serviceTypes] = useStore((s) => s.serviceTypes);
+	const [profile] = useStore(
+		(s) => process?.profile_id && s.profiles[process?.profile_id]
+	);
 	const { service_id, scheduled_time, check_in_time, service_types, notes } =
 		process;
 	const processServiceTypes = service_types
@@ -50,6 +60,7 @@ export const ListItem: FC<ProcessType> = ({ ...process }) => {
 					{notes}
 				</span>
 			</Td>
+			{showDesk && <Td className="w-20">{profile}</Td>}
 			<Td className="w-96">
 				<div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 justify-end">
 					<ProcessActions process={process} />

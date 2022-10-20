@@ -10,6 +10,9 @@ interface StoreType {
 	serviceTypesLoading: boolean;
 	serviceTypesError: string | null;
 	serviceTypes: ServiceType[];
+	profilesLoading: boolean;
+	profilesError: string | null;
+	profiles: Record<string, string>;
 	actionLoading: boolean;
 	actionError: string | null;
 }
@@ -23,6 +26,9 @@ const { Provider, useStore: originalUseStore } = createFastContext<StoreType>({
 	serviceTypes: [],
 	serviceTypesLoading: true,
 	serviceTypesError: null,
+	profiles: {},
+	profilesLoading: true,
+	profilesError: null,
 	actionLoading: false,
 	actionError: null,
 });
