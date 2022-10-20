@@ -1,4 +1,4 @@
-# [1.4.0-rc.2](https://github.com/technologiestiftung/zms-supabase/compare/v1.4.0-rc.1...v1.4.0-rc.2) (2022-10-19)
+# [1.5.0-rc.1](https://github.com/technologiestiftung/zms-supabase/compare/v1.4.0-rc.1...v1.5.0-rc.1) (2022-10-19)
 
 
 ### Bug Fixes
