@@ -30,11 +30,13 @@ const parseFormData = (
 	checkinDate: Date;
 	startDate: Date | null;
 	endDate: Date | null;
+	notes: string | null;
 } => {
 	const scheduledDate = parseTime(data.get("scheduledTime") as string);
 	const checkinDate = parseTime(data.get("checkinTime") as string);
 	const startDate = parseTime(data.get("startTime") as string);
 	const endDate = parseTime(data.get("endTime") as string);
+	const notes = data.get("notes") as string | null;
 
 	const rawServiceTypeId = data.get("serviceTypeId") || "1";
 	const serviceTypeId = (
@@ -53,6 +55,7 @@ const parseFormData = (
 		checkinDate: checkinDate || new Date(),
 		startDate: isValid(startDate) ? startDate : null,
 		endDate: isValid(endDate) ? startDate : null,
+		notes: notes || null,
 	};
 };
 
@@ -62,6 +65,9 @@ export const EditProcessForm: FC = () => {
 	const [serviceTypes, setStore] = useStore((s) => s.serviceTypes);
 	const [serviceTypesError] = useStore((s) => s.serviceTypesError);
 	const [currentlyEditedProcess] = useStore((s) => s.currentlyEditedProcess);
+	const [textAreaValue, setTextAreaValue] = useState<string>(
+		currentlyEditedProcess?.notes || ""
+	);
 	const [serviceTypesValue, setServiceTypesValue] = useState<ValueType>(
 		(
 			currentlyEditedProcess?.service_types
@@ -112,6 +118,7 @@ export const EditProcessForm: FC = () => {
 				.from<ProcessType>("processes")
 				.update({
 					service_id: parsedData.serviceId,
+					notes: parsedData.notes,
 					scheduled_time: parsedData.scheduledDate.toISOString(),
 					check_in_time: parsedData.checkinDate.toISOString(),
 					start_time: parsedData.startDate?.toISOString(),
@@ -144,7 +151,7 @@ export const EditProcessForm: FC = () => {
 	return (
 		<>
 			<form ref={formRef} name="processEditForm" onSubmit={submitHandler}>
-				<div className="p-8 border-y border-gray-100">
+				<div className="p-8 border-y border-gray-100 max-h-[calc(100vh-320px)] overflow-y-auto">
 					{(serviceTypesError || error) && (
 						<div className="mb-4">
 							<Alert variant="danger" title="Es ist ein Fehler aufgetreten">
@@ -187,7 +194,7 @@ export const EditProcessForm: FC = () => {
 								required
 								type="time"
 								defaultValue={format(
-									new Date(currentlyEditedProcess.scheduled_time!),
+									new Date(currentlyEditedProcess.scheduled_time),
 									"HH:mm"
 								)}
 							/>
@@ -218,6 +225,13 @@ export const EditProcessForm: FC = () => {
 								}
 							/>
 						</fieldset>
+						<Input.TextArea
+							name="notes"
+							placeholder="Fügen Sie hier eine Notiz hinzu"
+							label="Notizen (optional)"
+							value={textAreaValue}
+							onChange={(evt) => setTextAreaValue(evt.target.value)}
+						/>
 					</fieldset>
 				</div>
 				<footer className="p-8 flex justify-end gap-4">
