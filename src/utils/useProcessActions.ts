@@ -6,7 +6,7 @@ import { useStore } from "./Store";
 import { supabase } from "./supabase";
 
 export const useProcessActions = (
-	process: ProcessType,
+	process: ProcessType | null,
 	config?: {
 		onError?: (error: string, process: ProcessType) => void;
 		onCompleted?: (process: ProcessType) => void;
@@ -20,7 +20,11 @@ export const useProcessActions = (
 	callProcess: () => Promise<void>;
 	completeProcess: () => Promise<void>;
 	restoreProcess: () => Promise<void>;
-	editProcess: (newProcess: Partial<ProcessType>) => Promise<void>;
+	editProcess: (
+		newProcess: Partial<ProcessType> & {
+			serviceTypeIds: number[];
+		}
+	) => Promise<void>;
 } => {
 	const { user } = Auth.useUser();
 	const [processInProgress, setStore] = useStore((s) => s.processInProgress);
@@ -28,7 +32,8 @@ export const useProcessActions = (
 	// const { user } = Auth.useUser(); // TODO: Add userId to process when implemented in DB
 
 	const restoreProcess = useCallback(async () => {
-		const resetProps = { start_time: null, end_time: null };
+		if (!process) return;
+		const resetProps = { start_time: null, end_time: null, profile_id: null };
 		setStore({
 			actionLoading: true,
 			actionError: null,
@@ -60,6 +65,7 @@ export const useProcessActions = (
 
 	const cancelProcessCall = useCallback(
 		async (processToCancel = process) => {
+			if (!processToCancel) return;
 			setStore({
 				processInProgress: null,
 				actionLoading: true,
@@ -96,6 +102,7 @@ export const useProcessActions = (
 	);
 
 	const callProcess = useCallback(async () => {
+		if (!process) return;
 		if (processInProgress) await cancelProcessCall(processInProgress);
 		const start_time = new Date().toISOString();
 		setStore({
@@ -135,14 +142,16 @@ export const useProcessActions = (
 		});
 	}, [
 		processInProgress,
+		cancelProcessCall,
 		setStore,
 		process,
+		user?.id,
 		processes,
 		config,
-		cancelProcessCall,
 	]);
 
 	const completeProcess = useCallback(async () => {
+		if (!process) return;
 		const end_time = new Date().toISOString();
 		setStore({
 			processInProgress: null,
@@ -175,41 +184,71 @@ export const useProcessActions = (
 			actionLoading: false,
 			actionError: null,
 		});
-	}, [setStore, process, config, processes]);
+	}, [setStore, processes, user?.id, process, config]);
 
 	const editProcess = useCallback(
-		async (newProcess: Partial<ProcessType>) => {
+		async (
+			rawNewProcess: Partial<ProcessType> & {
+				serviceTypeIds: number[];
+			}
+		) => {
+			if (!process) return;
+			const { serviceTypeIds, ...newProcess } = rawNewProcess;
+			const inProgress =
+				process.id === processInProgress?.id
+					? { ...processInProgress, ...newProcess }
+					: processInProgress;
 			setStore({
+				processInProgress: inProgress,
 				actionLoading: true,
 				actionError: null,
 				processes: processes.map((p) => {
-					if (p.id === process.id) {
-						return { ...p, ...newProcess };
-					}
+					if (p.id === process.id) return { ...p, ...newProcess };
 					return p;
 				}),
 			});
+
 			const { error } = await supabase
 				.from<ProcessType>("processes")
 				.update(newProcess)
-				.eq("id", process.id);
+				.match({ id: process.id });
+
 			if (error) {
 				console.log(error);
 				config?.onError && config.onError(error.message, process);
 				setStore({
+					processInProgress,
 					actionLoading: true,
 					actionError: error.message,
 					processes,
 				});
 				return;
 			}
+			try {
+				await supabase.rpc("add_service_types_to_process", {
+					pid: process.id,
+					service_type_ids: serviceTypeIds,
+				});
+			} catch (err) {
+				const error = err as Error;
+				console.log(error);
+				config?.onError && config.onError(error.message, process);
+				setStore({
+					processInProgress,
+					actionLoading: true,
+					actionError: error.message,
+					processes,
+				});
+				return;
+			}
+
 			config?.onEdited && config.onEdited(process);
 			setStore({
 				actionLoading: false,
 				actionError: null,
 			});
 		},
-		[setStore, process, config, processes]
+		[process, processInProgress, setStore, processes, config]
 	);
 
 	return {

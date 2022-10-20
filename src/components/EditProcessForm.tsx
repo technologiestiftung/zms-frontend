@@ -12,6 +12,7 @@ import { setMinutes, setHours, format, isValid } from "date-fns";
 import { useStore } from "../utils/Store";
 import { ProcessType, ServiceType } from "../clean-types";
 import { ServiceTypesSelect, ValueType } from "./ServiceTypesSelect";
+import { useProcessActions } from "../utils/useProcessActions";
 
 const parseTime = (val?: string) => {
 	if (typeof val !== "string") return null;
@@ -71,6 +72,13 @@ export const EditProcessForm: FC = () => {
 	const [serviceTypesSelectError, setServiceTypesSelectError] = useState<
 		string | null
 	>(null);
+	const { editProcess } = useProcessActions(currentlyEditedProcess, {
+		onEdited: () => {
+			setStore({ currentlyEditedProcess: null, actionLoading: false });
+			setServiceTypesValue([]);
+			setTouched(false);
+		},
+	});
 
 	useEffect(() => {
 		if (!touched) return;
@@ -106,37 +114,21 @@ export const EditProcessForm: FC = () => {
 			const rawData = new FormData(formRef.current);
 			const parsedData = parseFormData(rawData, serviceTypesValue);
 
-			const { error } = await supabase
-				.from<ProcessType>("processes")
-				.update({
-					service_id: parsedData.serviceId,
-					notes: parsedData.notes,
-					scheduled_time: parsedData.scheduledDate.toISOString(),
-					check_in_time: parsedData.checkinDate.toISOString(),
-					start_time: parsedData.startDate?.toISOString(),
-					end_time: parsedData.endDate?.toISOString(),
-				})
-				.match({ id: currentlyEditedProcess.id });
-
-			if (error) {
-				setError(error.message);
-				return;
-			}
-
-			try {
-				await supabase.rpc("add_service_types_to_process", {
-					pid: currentlyEditedProcess.id,
-					service_type_ids: parsedData.serviceTypeIds,
-				});
-			} catch (err) {
-				setError((err as Error).message);
-			}
+			editProcess({
+				service_id: parsedData.serviceId,
+				notes: parsedData.notes,
+				scheduled_time: parsedData.scheduledDate.toISOString(),
+				check_in_time: parsedData.checkinDate.toISOString(),
+				start_time: parsedData.startDate?.toISOString(),
+				end_time: parsedData.endDate?.toISOString(),
+				serviceTypeIds: parsedData.serviceTypeIds,
+			});
 
 			setStore({ currentlyEditedProcess: null, actionLoading: false });
 			setServiceTypesValue([]);
 			setTouched(false);
 		},
-		[currentlyEditedProcess, setStore, serviceTypesValue]
+		[setStore, currentlyEditedProcess, serviceTypesValue, editProcess]
 	);
 
 	if (!currentlyEditedProcess) return null;
