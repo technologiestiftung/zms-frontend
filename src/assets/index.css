@@ -42,31 +42,35 @@
 		background: rgba(36, 180, 126, var(--tw-bg-opacity));
 	}
 
-	[href="#auth-sign-up"] {
+	[href="#auth-forgot-password"] {
 		display: none;
+	}
+
+	[href="#auth-sign-up"] {
+		/* display: none; TODO: Renable when all accounts are created */
 	}
 
 	[class~="bg-brand"] button[class~="sbui-btn-text"],
 	[class~="bg-brand"] button[class~="sbui-btn-outline"]:not(:hover) {
-		@apply text-white shadow-none;
+		@apply !text-white !shadow-none;
 	}
 
 	[class~="bg-brand"] button[class~="sbui-btn-outline"]:not(:hover) {
-		@apply border-white bg-brandLight border-transparent;
+		@apply !border-white !bg-brandLight !border-transparent;
 	}
 
 	[class~="bg-brand"] button[class~="sbui-btn-outline"]:hover {
-		@apply border-white;
+		@apply !border-white;
 	}
 
 	[class~="bg-brand"] button[class~="sbui-btn-secondary"]:hover {
-		@apply bg-white;
+		@apply !bg-white;
 	}
 
 	[class~="rmsc"] [class~="dropdown-heading"] {
-		height: auto;
-		min-height: 47px;
-		padding: 6px;
+		height: auto !important;
+		min-height: 47px !important;
+		padding: 6px !important;
 	}
 
 	[class~="rmsc"] [class~="dropdown-container"] {
