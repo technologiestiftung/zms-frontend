@@ -1,4 +1,3 @@
-import { Auth, IconRefreshCw } from "@supabase/ui";
 import { format } from "date-fns";
 import { FC } from "react";
 import { ProcessType, ServiceType } from "../clean-types";
@@ -23,15 +22,7 @@ export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 	const progressTitleText = classNames(
 		`In Arbeit: Bitte person mit der ID ${service_id} im ZMS aufrufen`
 	);
-	const progressTitle = (
-		<div className="flex gap-4 items-center">
-			<span>{progressTitleText}</span>
-			<span className="animate-pulse block w-[24px] h-[24px]">
-				<IconRefreshCw size={24} strokeWidth={2} className="animate-spin" />
-			</span>
-		</div>
-	);
-	const title = inProgress ? progressTitle : "Nächster Aufruf";
+	const title = inProgress ? progressTitleText : "Nächster Aufruf";
 	return (
 		<div
 			className={classNames(
