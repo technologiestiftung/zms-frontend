@@ -1,4 +1,4 @@
-import { IconRefreshCw } from "@supabase/ui";
+import { Auth, IconRefreshCw } from "@supabase/ui";
 import { format } from "date-fns";
 import { FC } from "react";
 import { ProcessType, ServiceType } from "../clean-types";

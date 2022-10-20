@@ -1,4 +1,5 @@
 // import { Auth } from "@supabase/ui"; // TODO: Add userId to process when implemented in DB
+import { Auth } from "@supabase/ui";
 import { useCallback } from "react";
 import { ProcessType } from "../clean-types";
 import { useStore } from "./Store";
@@ -21,6 +22,7 @@ export const useProcessActions = (
 	restoreProcess: () => Promise<void>;
 	editProcess: (newProcess: Partial<ProcessType>) => Promise<void>;
 } => {
+	const { user } = Auth.useUser();
 	const [processInProgress, setStore] = useStore((s) => s.processInProgress);
 	const [processes] = useStore((s) => s.processes);
 	// const { user } = Auth.useUser(); // TODO: Add userId to process when implemented in DB
@@ -63,14 +65,14 @@ export const useProcessActions = (
 			actionError: null,
 			processes: processes.map((p) => {
 				if (p.id === process.id) {
-					return { ...p, start_time: null, end_time: null };
+					return { ...p, start_time: null, end_time: null, profile_id: null };
 				}
 				return p;
 			}),
 		});
 		const { error } = await supabase
 			.from<ProcessType>("processes")
-			.update({ start_time: null, end_time: null })
+			.update({ start_time: null, end_time: null, profile_id: null })
 			.match({ id: process.id });
 		if (error) {
 			console.log(error);
@@ -96,19 +98,23 @@ export const useProcessActions = (
 		}
 		const start_time = new Date().toISOString();
 		setStore({
-			processInProgress: { ...process, start_time },
+			processInProgress: {
+				...process,
+				start_time,
+				profile_id: user?.id || null,
+			},
 			actionLoading: true,
 			actionError: null,
 			processes: processes.map((p) => {
 				if (p.id === process.id) {
-					return { ...p, start_time };
+					return { ...p, start_time, profile_id: user?.id || null };
 				}
 				return p;
 			}),
 		});
 		const { error } = await supabase
 			.from<ProcessType>("processes")
-			.update({ start_time, end_time: null })
+			.update({ start_time, end_time: null, profile_id: user?.id || null })
 			.match({ id: process.id });
 		if (error) {
 			console.log(error);
@@ -142,13 +148,14 @@ export const useProcessActions = (
 			actionLoading: true,
 			actionError: null,
 			processes: processes.map((p) => {
-				if (p.id === process.id) return { ...p, end_time };
+				if (p.id === process.id)
+					return { ...p, end_time, profile_id: user?.id || null };
 				return p;
 			}),
 		});
 		const { error } = await supabase
 			.from<ProcessType>("processes")
-			.update({ end_time })
+			.update({ end_time, profile_id: user?.id || null })
 			.match({ id: process.id });
 		if (error) {
 			console.log(error);
