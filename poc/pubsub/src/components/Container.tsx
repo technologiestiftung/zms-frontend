@@ -21,6 +21,15 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 	const [change, setChange] = useState<number>(0);
 
 	useEffect(() => {
+		if (processInProgress) return;
+		const ownedProcessInProgress = processes.find(
+			(p) => p.profile_id === user?.id && p.start_time && !p.end_time
+		);
+		if (!ownedProcessInProgress) return;
+		setStore({ processInProgress: ownedProcessInProgress });
+	}, [processInProgress, processes, setStore]);
+
+	useEffect(() => {
 		if (!processInProgress) return;
 		const progressProcess = processes.find(
 			(p) => p.id === processInProgress.id
@@ -55,10 +64,20 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 	}, [setStore]);
 
 	const updateList = useCallback(async () => {
-		const { data: processes, error } = await supabase
-			.from<ProcessType>("processes")
-			.select("*")
-			.filter("active", "eq", true);
+		const { data: processes, error } = await supabase.from<ProcessType>(
+			"processes"
+		).select(`
+				id,
+				service_id,
+				scheduled_time,
+				start_time,
+				end_time,
+				notes,
+				score,
+				check_in_time,
+				profile_id,
+				service_types(id)
+			`);
 
 		if (error) {
 			console.error(error);

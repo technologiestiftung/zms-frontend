@@ -1,29 +1,44 @@
-import { Alert, Auth, Input, Select, Typography } from "@supabase/ui";
-import { FC, useRef, FormEventHandler, useCallback, useState } from "react";
+import { Alert, Auth, Input, Typography } from "@supabase/ui";
+import {
+	FC,
+	useRef,
+	FormEventHandler,
+	useCallback,
+	useState,
+	useEffect,
+} from "react";
 import { supabase } from "../utils/supabase";
-import { useServiceTypes } from "../utils/useServiceTypes";
 import { setMinutes, setHours } from "date-fns";
 import { useStore } from "../utils/Store";
+import { RawProcessType } from "../clean-types";
+import {
+	ServiceTypesSelect,
+	ValueType,
+} from "../components/ServiceTypesSelect";
 
 const parseFormData = (
-	data: FormData
+	data: FormData,
+	serviceTypesValue: ValueType
 ): {
-	serviceId: string;
-	serviceTypeId: number;
+	serviceId: number;
+	serviceTypeIds: number[];
 	scheduledDate: Date;
+	notes: string | null;
 } => {
-	const serviceId = data.get("serviceId") as string;
-
 	const rawScheduledTime = data.get("scheduledTime") as string;
 	const [hours, minutes] = rawScheduledTime.split(":");
 	const scheduledDate = setMinutes(setHours(new Date(), +hours), +minutes);
 
-	const rawServiceTypeId = data.get("serviceTypeId") || "1";
-	const serviceTypeId = (
-		typeof rawServiceTypeId === "string" ? parseInt(rawServiceTypeId, 10) : 1
+	const rawServiceId = data.get("serviceId") as string;
+	const serviceId = (
+		typeof rawServiceId === "string" ? parseInt(rawServiceId, 10) : 1
 	) as number;
 
-	return { serviceId, serviceTypeId, scheduledDate };
+	const notes = data.get("notes") as string | null;
+
+	const serviceTypeIds = serviceTypesValue.map((s) => s.value) as number[];
+
+	return { serviceId, serviceTypeIds, scheduledDate, notes: notes || null };
 };
 
 export const ReceptionService: FC = () => {
@@ -32,7 +47,24 @@ export const ReceptionService: FC = () => {
 	const [serviceTypes] = useStore((s) => s.serviceTypes);
 	const [serviceTypesError] = useStore((s) => s.serviceTypesError);
 	const [error, setError] = useState<string | null>(null);
+	const [serviceTypesValue, setServiceTypesValue] = useState<ValueType>([]);
+	const [touched, setTouched] = useState(false);
+	const [serviceTypesSelectError, setServiceTypesSelectError] = useState<
+		string | null
+	>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
+	const [textAreaValue, setTextAreaValue] = useState<string>("");
+
+	useEffect(() => {
+		if (!touched) return;
+		if (serviceTypesValue.length === 0) {
+			setServiceTypesSelectError(
+				"Es sollte mindestens eine Dienstleistung ausgewählt werden"
+			);
+			return;
+		}
+		setServiceTypesSelectError(null);
+	}, [touched, serviceTypesValue]);
 
 	const submitHandler = useCallback<FormEventHandler<HTMLFormElement>>(
 		async (evt): Promise<void> => {
@@ -41,35 +73,70 @@ export const ReceptionService: FC = () => {
 
 			setError(null);
 			setSuccessMsg(null);
+			setTouched(true);
 
 			if (!formRef.current) return;
 
-			const rawData = new FormData(formRef.current);
-			const { serviceId, serviceTypeId, scheduledDate } =
-				parseFormData(rawData);
+			if (serviceTypesValue.length === 0) {
+				setServiceTypesSelectError(
+					"Es sollte mindestens eine Dienstleistung ausgewählt werden"
+				);
+				return;
+			}
+			setServiceTypesSelectError(null);
 
-			const { error } = await supabase.from("processes").insert([
-				{
-					service_id: serviceId,
-					service_type_id: serviceTypeId,
-					scheduled_time: scheduledDate.toISOString(),
-				},
-			]);
+			const rawData = new FormData(formRef.current);
+			const { serviceId, serviceTypeIds, scheduledDate, notes } = parseFormData(
+				rawData,
+				serviceTypesValue
+			);
+
+			const { data, error } = await supabase
+				.from<RawProcessType>("processes")
+				.insert([
+					{
+						service_id: serviceId,
+						scheduled_time: scheduledDate.toISOString(),
+						notes,
+					},
+				]);
 
 			if (error) {
 				setError(error.message);
 				return;
 			}
 
-			const serviceType = serviceTypes.find(({ id }) => id === serviceTypeId);
+			if (!data || data.length === 0) {
+				setError("Adding the process didn't work");
+				return;
+			}
+
+			try {
+				await supabase.rpc("add_service_types_to_process", {
+					pid: data[0].id,
+					service_type_ids: serviceTypeIds,
+				});
+			} catch (err) {
+				setError((err as Error).message);
+			}
+
+			const processServiceTypes = serviceTypeIds
+				.map(
+					(s) => serviceTypes.find((serviceType) => serviceType.id === s)?.name
+				)
+				.filter(Boolean)
+				.join(", ");
 			setSuccessMsg(
-				`Ein neuer Checkin für die Dienstlietung "${serviceType?.name}" mit id "${serviceId}" wurde angelegt.`
+				`Ein neuer Checkin für die Dienstlietung(en) "${processServiceTypes}" mit id "${serviceId}" wurde angelegt.`
 			);
 
 			formRef.current.reset();
 			formRef.current.focus();
+			setServiceTypesValue([]);
+			setTextAreaValue("");
+			setTouched(false);
 		},
-		[serviceTypes]
+		[serviceTypes, serviceTypesValue]
 	);
 
 	if (!user) return null;
@@ -105,23 +172,24 @@ export const ReceptionService: FC = () => {
 						required
 						type="number"
 					/>
-					<Select
-						name="serviceTypeId"
-						label="Erbrachte Dienstleistung"
-						required
-					>
-						{serviceTypes.map((serviceType) => (
-							<Select.Option value={`${serviceType.id}`} key={serviceType.id}>
-								{serviceType.name}
-							</Select.Option>
-						))}
-					</Select>
+					<ServiceTypesSelect
+						value={serviceTypesValue}
+						onChange={setServiceTypesValue}
+						error={serviceTypesSelectError}
+					/>
 					<Input
 						name="scheduledTime"
 						placeholder="Urzeit der ZMS Termin"
 						label="Uhrzeit des ursprünglichen Termins (Nicht des Checkins)"
 						required
 						type="time"
+					/>
+					<Input.TextArea
+						name="notes"
+						placeholder="Fügen Sie hier eine Notiz hinzu"
+						label="Notizen (optional)"
+						value={textAreaValue}
+						onChange={(evt) => setTextAreaValue(evt.target.value)}
 					/>
 				</fieldset>
 				<div className="sbui-btn-container">

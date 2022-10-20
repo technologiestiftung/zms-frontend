@@ -1,9 +1,17 @@
 import { Alert, Button, Input, Select, Typography } from "@supabase/ui";
-import { FC, useRef, FormEventHandler, useCallback, useState } from "react";
+import {
+	FC,
+	useRef,
+	FormEventHandler,
+	useCallback,
+	useState,
+	useEffect,
+} from "react";
 import { supabase } from "../utils/supabase";
 import { setMinutes, setHours, format, isValid } from "date-fns";
 import { useStore } from "../utils/Store";
-import { ProcessType } from "../clean-types";
+import { ProcessType, ServiceType } from "../clean-types";
+import { ServiceTypesSelect, ValueType } from "./ServiceTypesSelect";
 
 const parseTime = (val?: string) => {
 	if (typeof val !== "string") return null;
@@ -13,19 +21,22 @@ const parseTime = (val?: string) => {
 };
 
 const parseFormData = (
-	data: FormData
+	data: FormData,
+	serviceTypesValue: ValueType
 ): {
 	serviceId: number;
-	serviceTypeId: number;
+	serviceTypeIds: number[];
 	scheduledDate: Date;
 	checkinDate: Date;
 	startDate: Date | null;
 	endDate: Date | null;
+	notes: string | null;
 } => {
 	const scheduledDate = parseTime(data.get("scheduledTime") as string);
 	const checkinDate = parseTime(data.get("checkinTime") as string);
 	const startDate = parseTime(data.get("startTime") as string);
 	const endDate = parseTime(data.get("endTime") as string);
+	const notes = data.get("notes") as string | null;
 
 	const rawServiceTypeId = data.get("serviceTypeId") || "1";
 	const serviceTypeId = (
@@ -39,11 +50,12 @@ const parseFormData = (
 
 	return {
 		serviceId,
-		serviceTypeId,
+		serviceTypeIds: serviceTypesValue.map((s) => s.value) as number[],
 		scheduledDate: scheduledDate || new Date(),
 		checkinDate: checkinDate || new Date(),
 		startDate: isValid(startDate) ? startDate : null,
 		endDate: isValid(endDate) ? startDate : null,
+		notes: notes || null,
 	};
 };
 
@@ -53,6 +65,31 @@ export const EditProcessForm: FC = () => {
 	const [serviceTypes, setStore] = useStore((s) => s.serviceTypes);
 	const [serviceTypesError] = useStore((s) => s.serviceTypesError);
 	const [currentlyEditedProcess] = useStore((s) => s.currentlyEditedProcess);
+	const [textAreaValue, setTextAreaValue] = useState<string>(
+		currentlyEditedProcess?.notes || ""
+	);
+	const [serviceTypesValue, setServiceTypesValue] = useState<ValueType>(
+		(
+			currentlyEditedProcess?.service_types
+				.map((s) => serviceTypes.find((serviceType) => serviceType.id === s.id))
+				.filter(Boolean) as ServiceType[]
+		).map((s) => ({ label: s?.name, value: s?.id }))
+	);
+	const [touched, setTouched] = useState(false);
+	const [serviceTypesSelectError, setServiceTypesSelectError] = useState<
+		string | null
+	>(null);
+
+	useEffect(() => {
+		if (!touched) return;
+		if (serviceTypesValue.length === 0) {
+			setServiceTypesSelectError(
+				"Es sollte mindestens eine Dienstleistung ausgewählt werden"
+			);
+			return;
+		}
+		setServiceTypesSelectError(null);
+	}, [touched, serviceTypesValue]);
 
 	const submitHandler = useCallback<FormEventHandler<HTMLFormElement>>(
 		async (evt): Promise<void> => {
@@ -62,17 +99,26 @@ export const EditProcessForm: FC = () => {
 			setStore({ actionLoading: true });
 
 			setError(null);
+			setTouched(true);
 
 			if (!formRef.current || !currentlyEditedProcess) return;
 
+			if (serviceTypesValue.length === 0) {
+				setServiceTypesSelectError(
+					"Es sollte mindestens eine Dienstleistung ausgewählt werden"
+				);
+				return;
+			}
+			setServiceTypesSelectError(null);
+
 			const rawData = new FormData(formRef.current);
-			const parsedData = parseFormData(rawData);
+			const parsedData = parseFormData(rawData, serviceTypesValue);
 
 			const { error } = await supabase
 				.from<ProcessType>("processes")
 				.update({
 					service_id: parsedData.serviceId,
-					service_type_id: parsedData.serviceTypeId,
+					notes: parsedData.notes,
 					scheduled_time: parsedData.scheduledDate.toISOString(),
 					check_in_time: parsedData.checkinDate.toISOString(),
 					start_time: parsedData.startDate?.toISOString(),
@@ -85,16 +131,27 @@ export const EditProcessForm: FC = () => {
 				return;
 			}
 
+			try {
+				await supabase.rpc("add_service_types_to_process", {
+					pid: currentlyEditedProcess.id,
+					service_type_ids: parsedData.serviceTypeIds,
+				});
+			} catch (err) {
+				setError((err as Error).message);
+			}
+
 			setStore({ currentlyEditedProcess: null, actionLoading: false });
+			setServiceTypesValue([]);
+			setTouched(false);
 		},
-		[currentlyEditedProcess]
+		[currentlyEditedProcess, setStore, serviceTypesValue]
 	);
 
 	if (!currentlyEditedProcess) return null;
 	return (
 		<>
 			<form ref={formRef} name="processEditForm" onSubmit={submitHandler}>
-				<div className="p-8 border-y border-gray-100">
+				<div className="p-8 border-y border-gray-100 max-h-[calc(100vh-320px)] overflow-y-auto">
 					{(serviceTypesError || error) && (
 						<div className="mb-4">
 							<Alert variant="danger" title="Es ist ein Fehler aufgetreten">
@@ -113,18 +170,11 @@ export const EditProcessForm: FC = () => {
 							type="number"
 							defaultValue={currentlyEditedProcess.service_id}
 						/>
-						<Select
-							name="serviceTypeId"
-							label="Erbrachte Dienstleistung"
-							required
-							defaultValue={`${currentlyEditedProcess.service_type_id}`}
-						>
-							{serviceTypes.map((serviceType) => (
-								<Select.Option value={`${serviceType.id}`} key={serviceType.id}>
-									{serviceType.name}
-								</Select.Option>
-							))}
-						</Select>
+						<ServiceTypesSelect
+							value={serviceTypesValue}
+							onChange={setServiceTypesValue}
+							error={serviceTypesSelectError}
+						/>
 						<fieldset className="grid grid-cols-2 gap-4">
 							<Input
 								name="checkinTime"
@@ -144,7 +194,7 @@ export const EditProcessForm: FC = () => {
 								required
 								type="time"
 								defaultValue={format(
-									new Date(currentlyEditedProcess.scheduled_time!),
+									new Date(currentlyEditedProcess.scheduled_time),
 									"HH:mm"
 								)}
 							/>
@@ -175,6 +225,13 @@ export const EditProcessForm: FC = () => {
 								}
 							/>
 						</fieldset>
+						<Input.TextArea
+							name="notes"
+							placeholder="Fügen Sie hier eine Notiz hinzu"
+							label="Notizen (optional)"
+							value={textAreaValue}
+							onChange={(evt) => setTextAreaValue(evt.target.value)}
+						/>
 					</fieldset>
 				</div>
 				<footer className="p-8 flex justify-end gap-4">
