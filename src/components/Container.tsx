@@ -21,13 +21,13 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 	const [change, setChange] = useState<number>(0);
 
 	useEffect(() => {
-		if (processInProgress) return;
+		if (processInProgress || !user?.id) return;
 		const ownedProcessInProgress = processes.find(
 			(p) => p.profile_id === user?.id && p.start_time && !p.end_time
 		);
 		if (!ownedProcessInProgress) return;
 		setStore({ processInProgress: ownedProcessInProgress });
-	}, [processInProgress, processes, setStore]);
+	}, [processInProgress, processes, setStore, user?.id]);
 
 	useEffect(() => {
 		if (!processInProgress) return;

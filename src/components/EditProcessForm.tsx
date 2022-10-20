@@ -24,7 +24,7 @@ const parseFormData = (
 	data: FormData,
 	serviceTypesValue: ValueType
 ): {
-	serviceId: number;
+	serviceId: string;
 	serviceTypeIds: number[];
 	scheduledDate: Date;
 	checkinDate: Date;
@@ -38,15 +38,7 @@ const parseFormData = (
 	const endDate = parseTime(data.get("endTime") as string);
 	const notes = data.get("notes") as string | null;
 
-	const rawServiceTypeId = data.get("serviceTypeId") || "1";
-	const serviceTypeId = (
-		typeof rawServiceTypeId === "string" ? parseInt(rawServiceTypeId, 10) : 1
-	) as number;
-
-	const rawServiceId = data.get("serviceId") || "1";
-	const serviceId = (
-		typeof rawServiceId === "string" ? parseInt(rawServiceId, 10) : 1
-	) as number;
+	const serviceId = (data.get("serviceId") as string) || "1";
 
 	return {
 		serviceId,
@@ -167,7 +159,6 @@ export const EditProcessForm: FC = () => {
 							placeholder="Geben Sie das ZMS ID hier ein"
 							label="ZMS ID"
 							required
-							type="number"
 							defaultValue={currentlyEditedProcess.service_id}
 						/>
 						<ServiceTypesSelect
