@@ -1,3 +1,17 @@
+# [1.5.0-rc.1](https://github.com/technologiestiftung/zms-supabase/compare/v1.4.0...v1.5.0-rc.1) (2022-10-20)
+
+
+### Bug Fixes
+
+* Typo ([68a9473](https://github.com/technologiestiftung/zms-supabase/commit/68a94732c3f1ed7257946df7f81646b75473efe4))
+
+
+### Features
+
+* Add multi-select ([db0316a](https://github.com/technologiestiftung/zms-supabase/commit/db0316a1323a459b8ef765a70818f285128a4a6b))
+* Associate to user ([692a2f1](https://github.com/technologiestiftung/zms-supabase/commit/692a2f1c25994f849ac2bfd5e727b30c07ccb59c))
+* **ZMSP-32:** Add Text Area for notes ([82724e6](https://github.com/technologiestiftung/zms-supabase/commit/82724e6d99ea6ce23a402e7a46cfc6575901f74c))
+
 # [1.5.0-rc.2](https://github.com/technologiestiftung/zms-supabase/compare/v1.5.0-rc.1...v1.5.0-rc.2) (2022-10-20)
 
 
