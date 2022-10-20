@@ -96,9 +96,7 @@ export const useProcessActions = (
 	);
 
 	const callProcess = useCallback(async () => {
-		if (processInProgress) {
-			await cancelProcessCall(processInProgress);
-		}
+		if (processInProgress) await cancelProcessCall(processInProgress);
 		const start_time = new Date().toISOString();
 		setStore({
 			processInProgress: {
