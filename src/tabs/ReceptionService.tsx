@@ -54,14 +54,13 @@ export const ReceptionService: FC = () => {
 
 	useEffect(() => {
 		if (!touched) return;
-		/*
+		
 		if (serviceTypesValue.length === 0) {
 			setServiceTypesSelectError(
 				"Es sollte mindestens eine Dienstleistung ausgewählt werden"
 			);
 			return;
 		}
-		*/
 		setServiceTypesSelectError(null);
 	}, [touched, serviceTypesValue]);
 
@@ -76,14 +75,12 @@ export const ReceptionService: FC = () => {
 
 			if (!formRef.current) return;
 
-			/*
 			if (serviceTypesValue.length === 0) {
 				setServiceTypesSelectError(
 					"Es sollte mindestens eine Dienstleistung ausgewählt werden"
 				);
 				return;
 			}
-			*/
 			setServiceTypesSelectError(null);
 
 			const rawData = new FormData(formRef.current);
