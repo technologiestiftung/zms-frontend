@@ -33,17 +33,21 @@ export const NextCall: FC<ProcessType> = ({ ...nextProcess }) => {
 			<h1 className="text-2xl font-bold mb-2">{title}</h1>
 			<div className="flex gap-6 justify-between flex-wrap">
 				<div className="flex gap-8 text-sm">
-					<span className="w-28 break-all">
+					<span className="w-40 break-all">
 						<strong className="block">Vorgangsnummer: </strong>
 						{service_id}
 					</span>
 					<span className="w-16">
-						<strong className="block">Checkin Uhrzeit: </strong>
+						<strong className="block leading-4 mb-0.5">
+							Checkin Uhrzeit:{" "}
+						</strong>
 						{format(new Date(check_in_time), "HH:mm")}
 					</span>
 					{scheduled_time && (
 						<span className="w-16">
-							<strong className="block">Gebuchte Uhrzeit: </strong>
+							<strong className="block leading-4 mb-0.5">
+								Gebuchte Uhrzeit:{" "}
+							</strong>
 							{format(new Date(scheduled_time), "HH:mm")}
 						</span>
 					)}
