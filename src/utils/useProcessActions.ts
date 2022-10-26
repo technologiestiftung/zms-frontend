@@ -29,7 +29,6 @@ export const useProcessActions = (
 	const { user } = Auth.useUser();
 	const [processInProgress, setStore] = useStore((s) => s.processInProgress);
 	const [processes] = useStore((s) => s.processes);
-	// const { user } = Auth.useUser(); // TODO: Add userId to process when implemented in DB
 
 	const restoreProcess = useCallback(async () => {
 		if (!process) return;
