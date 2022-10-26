@@ -69,7 +69,7 @@ export const ProcessActions: FC<ProcessActionsPropsType> = ({
 			</Button>
 			{isOwnedAndCalled && (
 				<Button onClick={completeProcess} type="secondary">
-					Dienstleistungen Erbracht
+					Erledigt
 				</Button>
 			)}
 			{isNext && <Button onClick={callProcess}>Aufrufen</Button>}
