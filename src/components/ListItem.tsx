@@ -40,28 +40,28 @@ export const ListItem: FC<ListItemPropsType> = ({
 		.join(", ");
 	return (
 		<tr className="group">
-			<Td className="w-28 break-all">{service_id}</Td>
-			<Td className="w-20">
+			<Td className="w-min-content break-all">{service_id}</Td>
+			<Td className="w-min-content">
 				{check_in_time ? format(new Date(check_in_time), "HH:mm") : ""}
 			</Td>
-			<Td className="w-20">
+			<Td className="w-min-content">
 				{scheduled_time ? format(new Date(scheduled_time), "HH:mm") : ""}
 			</Td>
-			<Td>
+			<Td className="w-max">
 				<span
-					className="truncate max-w-sm inline-block"
+					className="truncate max-w-xs inline-block"
 					title={processServiceTypes}
 				>
 					{processServiceTypes}
 				</span>
 			</Td>
-			<Td>
+			<Td className="w-max">
 				<span className="truncate max-w-sm inline-block" title={notes || ""}>
 					{notes}
 				</span>
 			</Td>
 			{showDesk && <Td className="w-20">{profile}</Td>}
-			<Td className="w-96">
+			<Td className="w-min-content">
 				<div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 justify-end">
 					<ProcessActions process={process} />
 				</div>

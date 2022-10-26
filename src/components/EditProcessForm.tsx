@@ -82,12 +82,14 @@ export const EditProcessForm: FC = () => {
 
 	useEffect(() => {
 		if (!touched) return;
+		
 		if (serviceTypesValue.length === 0) {
 			setServiceTypesSelectError(
 				"Es sollte mindestens eine Dienstleistung ausgewählt werden"
 			);
 			return;
 		}
+		
 		setServiceTypesSelectError(null);
 	}, [touched, serviceTypesValue]);
 
@@ -109,6 +111,7 @@ export const EditProcessForm: FC = () => {
 				);
 				return;
 			}
+			
 			setServiceTypesSelectError(null);
 
 			const rawData = new FormData(formRef.current);
@@ -148,8 +151,8 @@ export const EditProcessForm: FC = () => {
 					<fieldset className="flex flex-col gap-6 w-full">
 						<Input
 							name="serviceId"
-							placeholder="Geben Sie das ZMS ID hier ein"
-							label="ZMS ID"
+							placeholder="Geben Sie die Vorgangsnummer hier ein"
+							label="Vorgangsnummer"
 							required
 							defaultValue={currentlyEditedProcess.service_id}
 						/>
@@ -172,8 +175,8 @@ export const EditProcessForm: FC = () => {
 							/>
 							<Input
 								name="scheduledTime"
-								placeholder="Uhrzeit des ZMS Termins"
-								label="Uhrzeit des ZMS Termins"
+								placeholder="Gebuchte Uhrzeit des Termines"
+								label="Gebuchte Uhrzeit des Termines"
 								required
 								type="time"
 								defaultValue={format(
@@ -227,7 +230,7 @@ export const EditProcessForm: FC = () => {
 					<div className="sbui-btn-container">
 						<input
 							type="submit"
-							value="Prozess editieren"
+							value="Speichern"
 							className="sbui-btn sbui-btn-primary sbui-btn-container--shadow sbui-btn--medium sbui-btn--text-align-center"
 						/>
 					</div>

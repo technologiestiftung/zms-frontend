@@ -54,6 +54,7 @@ export const ReceptionService: FC = () => {
 
 	useEffect(() => {
 		if (!touched) return;
+		
 		if (serviceTypesValue.length === 0) {
 			setServiceTypesSelectError(
 				"Es sollte mindestens eine Dienstleistung ausgewählt werden"
@@ -124,7 +125,7 @@ export const ReceptionService: FC = () => {
 				.filter(Boolean)
 				.join(", ");
 			setSuccessMsg(
-				`Ein neuer Checkin für die Dienstleistung(en) "${processServiceTypes}" mit id "${serviceId}" wurde angelegt.`
+				`Ein neuer Checkin mit der Vorgangsnummer ${serviceId} wurde angelegt.`
 			);
 
 			formRef.current.reset();
@@ -164,8 +165,8 @@ export const ReceptionService: FC = () => {
 				<fieldset className="flex flex-col gap-6 w-full mb-6">
 					<Input
 						name="serviceId"
-						placeholder="Geben Sie das ZMS ID hier ein"
-						label="ZMS ID"
+						placeholder="Geben Sie die Vorgangsnummer ein"
+						label="Vorgangsnummer"
 						required
 					/>
 					<ServiceTypesSelect
@@ -175,14 +176,14 @@ export const ReceptionService: FC = () => {
 					/>
 					<Input
 						name="scheduledTime"
-						placeholder="Urzeit der ZMS Termin"
-						label="Uhrzeit des ursprünglichen Termins (Nicht des Checkins)"
+						placeholder="Uhrzeit des gebuchten Termines"
+						label="Uhrzeit des gebuchten Termines"
 						required
 						type="time"
 					/>
 					<Input.TextArea
 						name="notes"
-						placeholder="Fügen Sie hier eine Notiz hinzu"
+						placeholder="Tragen Sie Bemerkungen und Hinweise hier ein"
 						label="Notizen (optional)"
 						value={textAreaValue}
 						onChange={(evt) => setTextAreaValue(evt.target.value)}
@@ -191,7 +192,7 @@ export const ReceptionService: FC = () => {
 				<div className="sbui-btn-container">
 					<input
 						type="submit"
-						value="Prozess anlegen"
+						value="Checkin anlegen"
 						className="sbui-btn sbui-btn-primary sbui-btn-container--shadow sbui-btn--medium sbui-btn--text-align-center"
 					/>
 				</div>

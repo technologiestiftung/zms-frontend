@@ -19,7 +19,7 @@ export const EditProcessModal: FC = () => {
 					{currentlyEditedProcess && (
 						<>
 							<Dialog.Title className="p-8 font-bold text-xl">
-								Checkin mit ZMS ID {currentlyEditedProcess.service_id}{" "}
+								Vorgangsnummer {currentlyEditedProcess.service_id}{" "}
 								bearbeiten
 							</Dialog.Title>
 							<EditProcessForm />
