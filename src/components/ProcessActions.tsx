@@ -44,7 +44,7 @@ export const ProcessActions: FC<ProcessActionsPropsType> = ({
 	return (
 		<>
 			{isDone && (
-				<Button onClick={restoreProcess} type="text">
+				<Button onClick={() => restoreProcess()} type="text">
 					Widerherstellen
 				</Button>
 			)}

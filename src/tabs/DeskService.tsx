@@ -35,7 +35,8 @@ export const DeskService: FC = () => {
 					<div className="mb-4">
 						<Alert variant="info" title="Heute hat noch niemand eingecheckt">
 							<Typography.Text>
-								Warten Sie auf die ersten Besucher. Diese werden hier angezeigt.
+								Warten Sie auf die erste Besucherin. Diese werden hier
+								angezeigt.
 							</Typography.Text>
 						</Alert>
 					</div>
