@@ -12,9 +12,9 @@ export const List: FC<{
 		<table className="w-full text-sm">
 			<thead className="font-bold border-b">
 				<tr>
-					<td className="pb-3">ZMS ID</td>
-					<td className="pb-3">Checkin</td>
-					<td className="pb-3">Termin</td>
+					<td className="pb-3">Vorgangsnummer</td>
+					<td className="pb-3">Checkin Uhrzeit</td>
+					<td className="pb-3">Termin Uhrzeit</td>
 					<td className="pb-3">Dienstleistung(en)</td>
 					<td className="pb-3">Notizen</td>
 					{showDesk && <td className="pb-3">Platz</td>}

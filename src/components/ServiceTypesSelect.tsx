@@ -47,7 +47,7 @@ export const ServiceTypesSelect: FC<ServiceTypesSelectPropsType> = ({
 		<div className="sbui-formlayout sbui-formlayout--medium sbui-formlayout--responsive">
 			<div className="sbui-space-row sbui-space-x-2 sbui-formlayout__label-container-horizontal">
 				<label className="sbui-formlayout__label" id="add-process-select-label">
-					Erbrachte Dienstleistung
+					Gewünschte Dienstleistung
 				</label>
 			</div>
 			<div className="sbui-formlayout__content-container-horizontal">
