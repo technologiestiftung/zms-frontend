@@ -47,7 +47,7 @@
 	}
 
 	[href="#auth-sign-up"] {
-		/* display: none; TODO: Renable when all accounts are created */
+		display: none;
 	}
 
 	[class~="bg-brand"] button[class~="sbui-btn-text"],
