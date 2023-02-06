@@ -27,6 +27,7 @@ export const DeskService: FC = () => {
 		(p) => !p.start_time && !p.end_time
 	);
 	const firstItem = nextProcesses[0];
+	console.log(nextProcesses);
 	return (
 		<>
 			{nextProcesses.length === 0 &&
