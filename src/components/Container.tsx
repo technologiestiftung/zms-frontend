@@ -9,6 +9,7 @@ import { supabase } from "../utils/supabase";
 import { Header } from "./Header";
 import { Progress } from "../components/Progress";
 import { EditProcessModal } from "./EditProcessModal";
+import { startOfDay } from "date-fns";
 
 interface ContainerProps {
 	children: JSX.Element | JSX.Element[];
@@ -89,9 +90,10 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 	}, [setStore]);
 
 	const updateList = useCallback(async () => {
-		const { data: processes, error } = await supabase.from<ProcessType>(
-			"processes"
-		).select(`
+		const { data: processes, error } = await supabase
+			.from<ProcessType>("processes")
+			.select(
+				`
 				id,
 				service_id,
 				scheduled_time,
@@ -102,7 +104,9 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 				check_in_time,
 				profile_id,
 				service_types(id)
-			`);
+			`
+			)
+			.gte("check_in_time", startOfDay(new Date()).toISOString());
 
 		if (error) {
 			console.error(error);
@@ -113,6 +117,7 @@ export const Container = ({ children }: ContainerProps): JSX.Element => {
 			return;
 		}
 
+		console.log(processes);
 		setStore({
 			processes: processes.sort(
 				(a, b) => (b.score || -999) - (a.score || -999)
